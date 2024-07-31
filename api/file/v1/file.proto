@@ -15,7 +15,7 @@ service File {
     };
   };
   rpc DownloadByAddr (DownloadByAddrRequest) returns (DownloadByAddrReply);
-  rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (DownloadDirByAddrReply);
+  rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply);
   rpc ListNode (ListNodeRequest) returns (ListNodeReply);
 
 }

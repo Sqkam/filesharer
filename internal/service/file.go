@@ -6,6 +6,7 @@ import (
 	v1 "filesharer/api/file/v1"
 	"filesharer/internal/biz"
 	"filesharer/internal/data"
+	"fmt"
 	"net/url"
 	"sync"
 )
@@ -79,21 +80,35 @@ func (s *FileService) DownloadByAddr(ctx context.Context, req *pb.DownloadByAddr
 	return resp, err
 
 }
-func (s *FileService) DownloadDirByAddr(ctx context.Context, req *pb.DownloadDirByAddrRequest) (*pb.DownloadDirByAddrReply, error) {
+
+func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn pb.File_DownloadDirByAddrServer) error {
 	if Endpoint.Host == req.Addr {
-		return s.uc.DownloadDirByAddr(ctx, req)
+		for {
+			err := conn.Send(&pb.DownloadDirByAddrReply{})
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	client, err := s.getClient(req.Addr)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	resp, err := client.DownloadDirByAddr(ctx, req)
+	stream, err := client.DownloadDirByAddr(context.Background(), req)
 	if err != nil {
 		m.Delete(req.Addr)
+		return err
 	}
-	return resp, err
+	for {
+		recv, err := stream.Recv()
+		if err != nil {
+			return err
+		}
+		fmt.Printf("%v\n", recv)
+	}
 }
+
 func (s *FileService) ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error) {
 
 	return s.uc.ListNode(ctx, req)

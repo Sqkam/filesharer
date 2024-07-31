@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.19.6
-// source: file/v1/file.proto
+// source: api/file/v1/file.proto
 
 package v1
 
@@ -33,7 +33,7 @@ type FileClient interface {
 	ListByAddr(ctx context.Context, in *ListByAddrRequest, opts ...grpc.CallOption) (*ListByAddrReply, error)
 	GetDetailByAddr(ctx context.Context, in *GetDetailByAddrRequest, opts ...grpc.CallOption) (*GetDetailByAddrReply, error)
 	DownloadByAddr(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (*DownloadByAddrReply, error)
-	DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (*DownloadDirByAddrReply, error)
+	DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadDirByAddrReply], error)
 	ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error)
 }
 
@@ -75,15 +75,24 @@ func (c *fileClient) DownloadByAddr(ctx context.Context, in *DownloadByAddrReque
 	return out, nil
 }
 
-func (c *fileClient) DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (*DownloadDirByAddrReply, error) {
+func (c *fileClient) DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadDirByAddrReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DownloadDirByAddrReply)
-	err := c.cc.Invoke(ctx, File_DownloadDirByAddr_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &File_ServiceDesc.Streams[0], File_DownloadDirByAddr_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &grpc.GenericClientStream[DownloadDirByAddrRequest, DownloadDirByAddrReply]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type File_DownloadDirByAddrClient = grpc.ServerStreamingClient[DownloadDirByAddrReply]
 
 func (c *fileClient) ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -102,7 +111,7 @@ type FileServer interface {
 	ListByAddr(context.Context, *ListByAddrRequest) (*ListByAddrReply, error)
 	GetDetailByAddr(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error)
 	DownloadByAddr(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error)
-	DownloadDirByAddr(context.Context, *DownloadDirByAddrRequest) (*DownloadDirByAddrReply, error)
+	DownloadDirByAddr(*DownloadDirByAddrRequest, grpc.ServerStreamingServer[DownloadDirByAddrReply]) error
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 	mustEmbedUnimplementedFileServer()
 }
@@ -123,8 +132,8 @@ func (UnimplementedFileServer) GetDetailByAddr(context.Context, *GetDetailByAddr
 func (UnimplementedFileServer) DownloadByAddr(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloadByAddr not implemented")
 }
-func (UnimplementedFileServer) DownloadDirByAddr(context.Context, *DownloadDirByAddrRequest) (*DownloadDirByAddrReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadDirByAddr not implemented")
+func (UnimplementedFileServer) DownloadDirByAddr(*DownloadDirByAddrRequest, grpc.ServerStreamingServer[DownloadDirByAddrReply]) error {
+	return status.Errorf(codes.Unimplemented, "method DownloadDirByAddr not implemented")
 }
 func (UnimplementedFileServer) ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNode not implemented")
@@ -204,23 +213,16 @@ func _File_DownloadByAddr_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_DownloadDirByAddr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadDirByAddrRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _File_DownloadDirByAddr_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(DownloadDirByAddrRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(FileServer).DownloadDirByAddr(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: File_DownloadDirByAddr_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).DownloadDirByAddr(ctx, req.(*DownloadDirByAddrRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(FileServer).DownloadDirByAddr(m, &grpc.GenericServerStream[DownloadDirByAddrRequest, DownloadDirByAddrReply]{ServerStream: stream})
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type File_DownloadDirByAddrServer = grpc.ServerStreamingServer[DownloadDirByAddrReply]
 
 func _File_ListNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListNodeRequest)
@@ -260,14 +262,16 @@ var File_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _File_DownloadByAddr_Handler,
 		},
 		{
-			MethodName: "DownloadDirByAddr",
-			Handler:    _File_DownloadDirByAddr_Handler,
-		},
-		{
 			MethodName: "ListNode",
 			Handler:    _File_ListNode_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "file/v1/file.proto",
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "DownloadDirByAddr",
+			Handler:       _File_DownloadDirByAddr_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "api/file/v1/file.proto",
 }
