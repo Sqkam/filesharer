@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.19.6
-// source: api/file/v1/file.proto
+// source: file/v1/file.proto
 
 package v1
 
@@ -19,22 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	File_ListByHostname_FullMethodName        = "/api.file.v1.File/ListByHostname"
-	File_GetDetailByHostname_FullMethodName   = "/api.file.v1.File/GetDetailByHostname"
-	File_DownloadByHostname_FullMethodName    = "/api.file.v1.File/DownloadByHostname"
-	File_DownloadDirByHostname_FullMethodName = "/api.file.v1.File/DownloadDirByHostname"
-	File_ListNode_FullMethodName              = "/api.file.v1.File/ListNode"
+	File_ListByIp_FullMethodName        = "/api.file.v1.File/ListByIp"
+	File_GetDetailByIp_FullMethodName   = "/api.file.v1.File/GetDetailByIp"
+	File_DownloadByIp_FullMethodName    = "/api.file.v1.File/DownloadByIp"
+	File_DownloadDirByIp_FullMethodName = "/api.file.v1.File/DownloadDirByIp"
+	File_ListNode_FullMethodName        = "/api.file.v1.File/ListNode"
 )
 
 // FileClient is the client API for File service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
-	ListByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
-	GetDetailByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
-	DownloadByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
-	DownloadDirByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
-	ListNode(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
+	ListByIp(ctx context.Context, in *ListByIpRequest, opts ...grpc.CallOption) (*ListByIpReply, error)
+	GetDetailByIp(ctx context.Context, in *GetDetailByIpRequest, opts ...grpc.CallOption) (*GetDetailByIpReply, error)
+	DownloadByIp(ctx context.Context, in *DownloadByIpRequest, opts ...grpc.CallOption) (*DownloadByIpReply, error)
+	DownloadDirByIp(ctx context.Context, in *DownloadDirByIpRequest, opts ...grpc.CallOption) (*DownloadDirByIpReply, error)
+	ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error)
 }
 
 type fileClient struct {
@@ -45,49 +45,49 @@ func NewFileClient(cc grpc.ClientConnInterface) FileClient {
 	return &fileClient{cc}
 }
 
-func (c *fileClient) ListByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
+func (c *fileClient) ListByIp(ctx context.Context, in *ListByIpRequest, opts ...grpc.CallOption) (*ListByIpReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFileReply)
-	err := c.cc.Invoke(ctx, File_ListByHostname_FullMethodName, in, out, cOpts...)
+	out := new(ListByIpReply)
+	err := c.cc.Invoke(ctx, File_ListByIp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileClient) GetDetailByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
+func (c *fileClient) GetDetailByIp(ctx context.Context, in *GetDetailByIpRequest, opts ...grpc.CallOption) (*GetDetailByIpReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFileReply)
-	err := c.cc.Invoke(ctx, File_GetDetailByHostname_FullMethodName, in, out, cOpts...)
+	out := new(GetDetailByIpReply)
+	err := c.cc.Invoke(ctx, File_GetDetailByIp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileClient) DownloadByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
+func (c *fileClient) DownloadByIp(ctx context.Context, in *DownloadByIpRequest, opts ...grpc.CallOption) (*DownloadByIpReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFileReply)
-	err := c.cc.Invoke(ctx, File_DownloadByHostname_FullMethodName, in, out, cOpts...)
+	out := new(DownloadByIpReply)
+	err := c.cc.Invoke(ctx, File_DownloadByIp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileClient) DownloadDirByHostname(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
+func (c *fileClient) DownloadDirByIp(ctx context.Context, in *DownloadDirByIpRequest, opts ...grpc.CallOption) (*DownloadDirByIpReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFileReply)
-	err := c.cc.Invoke(ctx, File_DownloadDirByHostname_FullMethodName, in, out, cOpts...)
+	out := new(DownloadDirByIpReply)
+	err := c.cc.Invoke(ctx, File_DownloadDirByIp_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileClient) ListNode(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
+func (c *fileClient) ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListFileReply)
+	out := new(ListNodeReply)
 	err := c.cc.Invoke(ctx, File_ListNode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -99,11 +99,11 @@ func (c *fileClient) ListNode(ctx context.Context, in *ListFileRequest, opts ...
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility.
 type FileServer interface {
-	ListByHostname(context.Context, *ListFileRequest) (*ListFileReply, error)
-	GetDetailByHostname(context.Context, *ListFileRequest) (*ListFileReply, error)
-	DownloadByHostname(context.Context, *ListFileRequest) (*ListFileReply, error)
-	DownloadDirByHostname(context.Context, *ListFileRequest) (*ListFileReply, error)
-	ListNode(context.Context, *ListFileRequest) (*ListFileReply, error)
+	ListByIp(context.Context, *ListByIpRequest) (*ListByIpReply, error)
+	GetDetailByIp(context.Context, *GetDetailByIpRequest) (*GetDetailByIpReply, error)
+	DownloadByIp(context.Context, *DownloadByIpRequest) (*DownloadByIpReply, error)
+	DownloadDirByIp(context.Context, *DownloadDirByIpRequest) (*DownloadDirByIpReply, error)
+	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 	mustEmbedUnimplementedFileServer()
 }
 
@@ -114,19 +114,19 @@ type FileServer interface {
 // pointer dereference when methods are called.
 type UnimplementedFileServer struct{}
 
-func (UnimplementedFileServer) ListByHostname(context.Context, *ListFileRequest) (*ListFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListByHostname not implemented")
+func (UnimplementedFileServer) ListByIp(context.Context, *ListByIpRequest) (*ListByIpReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListByIp not implemented")
 }
-func (UnimplementedFileServer) GetDetailByHostname(context.Context, *ListFileRequest) (*ListFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDetailByHostname not implemented")
+func (UnimplementedFileServer) GetDetailByIp(context.Context, *GetDetailByIpRequest) (*GetDetailByIpReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDetailByIp not implemented")
 }
-func (UnimplementedFileServer) DownloadByHostname(context.Context, *ListFileRequest) (*ListFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadByHostname not implemented")
+func (UnimplementedFileServer) DownloadByIp(context.Context, *DownloadByIpRequest) (*DownloadByIpReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadByIp not implemented")
 }
-func (UnimplementedFileServer) DownloadDirByHostname(context.Context, *ListFileRequest) (*ListFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadDirByHostname not implemented")
+func (UnimplementedFileServer) DownloadDirByIp(context.Context, *DownloadDirByIpRequest) (*DownloadDirByIpReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadDirByIp not implemented")
 }
-func (UnimplementedFileServer) ListNode(context.Context, *ListFileRequest) (*ListFileReply, error) {
+func (UnimplementedFileServer) ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNode not implemented")
 }
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
@@ -150,80 +150,80 @@ func RegisterFileServer(s grpc.ServiceRegistrar, srv FileServer) {
 	s.RegisterService(&File_ServiceDesc, srv)
 }
 
-func _File_ListByHostname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFileRequest)
+func _File_ListByIp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListByIpRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileServer).ListByHostname(ctx, in)
+		return srv.(FileServer).ListByIp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: File_ListByHostname_FullMethodName,
+		FullMethod: File_ListByIp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).ListByHostname(ctx, req.(*ListFileRequest))
+		return srv.(FileServer).ListByIp(ctx, req.(*ListByIpRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_GetDetailByHostname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFileRequest)
+func _File_GetDetailByIp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDetailByIpRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileServer).GetDetailByHostname(ctx, in)
+		return srv.(FileServer).GetDetailByIp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: File_GetDetailByHostname_FullMethodName,
+		FullMethod: File_GetDetailByIp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).GetDetailByHostname(ctx, req.(*ListFileRequest))
+		return srv.(FileServer).GetDetailByIp(ctx, req.(*GetDetailByIpRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_DownloadByHostname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFileRequest)
+func _File_DownloadByIp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadByIpRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileServer).DownloadByHostname(ctx, in)
+		return srv.(FileServer).DownloadByIp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: File_DownloadByHostname_FullMethodName,
+		FullMethod: File_DownloadByIp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).DownloadByHostname(ctx, req.(*ListFileRequest))
+		return srv.(FileServer).DownloadByIp(ctx, req.(*DownloadByIpRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_DownloadDirByHostname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFileRequest)
+func _File_DownloadDirByIp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadDirByIpRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileServer).DownloadDirByHostname(ctx, in)
+		return srv.(FileServer).DownloadDirByIp(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: File_DownloadDirByHostname_FullMethodName,
+		FullMethod: File_DownloadDirByIp_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).DownloadDirByHostname(ctx, req.(*ListFileRequest))
+		return srv.(FileServer).DownloadDirByIp(ctx, req.(*DownloadDirByIpRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _File_ListNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFileRequest)
+	in := new(ListNodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func _File_ListNode_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: File_ListNode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).ListNode(ctx, req.(*ListFileRequest))
+		return srv.(FileServer).ListNode(ctx, req.(*ListNodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -248,20 +248,20 @@ var File_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*FileServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListByHostname",
-			Handler:    _File_ListByHostname_Handler,
+			MethodName: "ListByIp",
+			Handler:    _File_ListByIp_Handler,
 		},
 		{
-			MethodName: "GetDetailByHostname",
-			Handler:    _File_GetDetailByHostname_Handler,
+			MethodName: "GetDetailByIp",
+			Handler:    _File_GetDetailByIp_Handler,
 		},
 		{
-			MethodName: "DownloadByHostname",
-			Handler:    _File_DownloadByHostname_Handler,
+			MethodName: "DownloadByIp",
+			Handler:    _File_DownloadByIp_Handler,
 		},
 		{
-			MethodName: "DownloadDirByHostname",
-			Handler:    _File_DownloadDirByHostname_Handler,
+			MethodName: "DownloadDirByIp",
+			Handler:    _File_DownloadDirByIp_Handler,
 		},
 		{
 			MethodName: "ListNode",
@@ -269,5 +269,5 @@ var File_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/file/v1/file.proto",
+	Metadata: "file/v1/file.proto",
 }

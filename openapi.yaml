@@ -3,8 +3,44 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: File API
     version: 0.0.1
-paths: {}
+paths:
+    v1/file/detail:
+        post:
+            tags:
+                - File
+            operationId: File_GetDetailByIp
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.file.v1.GetDetailByIpRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.file.v1.GetDetailByIpReply'
 components:
-    schemas: {}
+    schemas:
+        api.file.v1.GetDetailByIpReply:
+            type: object
+            properties:
+                fileName:
+                    type: string
+                size:
+                    type: string
+                updatedAt:
+                    type: string
+        api.file.v1.GetDetailByIpRequest:
+            type: object
+            properties:
+                ip:
+                    type: string
+                fileName:
+                    type: string
+tags:
+    - name: File
