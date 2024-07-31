@@ -35,46 +35,46 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on ListByIpRequest with the rules defined
+// Validate checks the field values on ListByAddrRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
-func (m *ListByIpRequest) Validate() error {
+func (m *ListByAddrRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListByIpRequest with the rules
+// ValidateAll checks the field values on ListByAddrRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListByIpRequestMultiError, or nil if none found.
-func (m *ListByIpRequest) ValidateAll() error {
+// ListByAddrRequestMultiError, or nil if none found.
+func (m *ListByAddrRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListByIpRequest) validate(all bool) error {
+func (m *ListByAddrRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Ip
+	// no validation rules for Addr
 
-	// no validation rules for Dir
+	// no validation rules for Path
 
 	if len(errors) > 0 {
-		return ListByIpRequestMultiError(errors)
+		return ListByAddrRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListByIpRequestMultiError is an error wrapping multiple validation errors
-// returned by ListByIpRequest.ValidateAll() if the designated constraints
+// ListByAddrRequestMultiError is an error wrapping multiple validation errors
+// returned by ListByAddrRequest.ValidateAll() if the designated constraints
 // aren't met.
-type ListByIpRequestMultiError []error
+type ListByAddrRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListByIpRequestMultiError) Error() string {
+func (m ListByAddrRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -83,11 +83,11 @@ func (m ListByIpRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListByIpRequestMultiError) AllErrors() []error { return m }
+func (m ListByAddrRequestMultiError) AllErrors() []error { return m }
 
-// ListByIpRequestValidationError is the validation error returned by
-// ListByIpRequest.Validate if the designated constraints aren't met.
-type ListByIpRequestValidationError struct {
+// ListByAddrRequestValidationError is the validation error returned by
+// ListByAddrRequest.Validate if the designated constraints aren't met.
+type ListByAddrRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -95,22 +95,24 @@ type ListByIpRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListByIpRequestValidationError) Field() string { return e.field }
+func (e ListByAddrRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListByIpRequestValidationError) Reason() string { return e.reason }
+func (e ListByAddrRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListByIpRequestValidationError) Cause() error { return e.cause }
+func (e ListByAddrRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListByIpRequestValidationError) Key() bool { return e.key }
+func (e ListByAddrRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListByIpRequestValidationError) ErrorName() string { return "ListByIpRequestValidationError" }
+func (e ListByAddrRequestValidationError) ErrorName() string {
+	return "ListByAddrRequestValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e ListByIpRequestValidationError) Error() string {
+func (e ListByAddrRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -122,14 +124,14 @@ func (e ListByIpRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListByIpRequest.%s: %s%s",
+		"invalid %sListByAddrRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListByIpRequestValidationError{}
+var _ error = ListByAddrRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -137,24 +139,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListByIpRequestValidationError{}
+} = ListByAddrRequestValidationError{}
 
-// Validate checks the field values on ListByIpReply with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *ListByIpReply) Validate() error {
+// Validate checks the field values on ListByAddrReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ListByAddrReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListByIpReply with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in ListByIpReplyMultiError, or
-// nil if none found.
-func (m *ListByIpReply) ValidateAll() error {
+// ValidateAll checks the field values on ListByAddrReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListByAddrReplyMultiError, or nil if none found.
+func (m *ListByAddrReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListByIpReply) validate(all bool) error {
+func (m *ListByAddrReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -168,7 +170,7 @@ func (m *ListByIpReply) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListByIpReplyValidationError{
+					errors = append(errors, ListByAddrReplyValidationError{
 						field:  fmt.Sprintf("Data[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -176,7 +178,7 @@ func (m *ListByIpReply) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListByIpReplyValidationError{
+					errors = append(errors, ListByAddrReplyValidationError{
 						field:  fmt.Sprintf("Data[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -185,7 +187,7 @@ func (m *ListByIpReply) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListByIpReplyValidationError{
+				return ListByAddrReplyValidationError{
 					field:  fmt.Sprintf("Data[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -196,19 +198,19 @@ func (m *ListByIpReply) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ListByIpReplyMultiError(errors)
+		return ListByAddrReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListByIpReplyMultiError is an error wrapping multiple validation errors
-// returned by ListByIpReply.ValidateAll() if the designated constraints
+// ListByAddrReplyMultiError is an error wrapping multiple validation errors
+// returned by ListByAddrReply.ValidateAll() if the designated constraints
 // aren't met.
-type ListByIpReplyMultiError []error
+type ListByAddrReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListByIpReplyMultiError) Error() string {
+func (m ListByAddrReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -217,11 +219,11 @@ func (m ListByIpReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListByIpReplyMultiError) AllErrors() []error { return m }
+func (m ListByAddrReplyMultiError) AllErrors() []error { return m }
 
-// ListByIpReplyValidationError is the validation error returned by
-// ListByIpReply.Validate if the designated constraints aren't met.
-type ListByIpReplyValidationError struct {
+// ListByAddrReplyValidationError is the validation error returned by
+// ListByAddrReply.Validate if the designated constraints aren't met.
+type ListByAddrReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -229,22 +231,22 @@ type ListByIpReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListByIpReplyValidationError) Field() string { return e.field }
+func (e ListByAddrReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListByIpReplyValidationError) Reason() string { return e.reason }
+func (e ListByAddrReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListByIpReplyValidationError) Cause() error { return e.cause }
+func (e ListByAddrReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListByIpReplyValidationError) Key() bool { return e.key }
+func (e ListByAddrReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListByIpReplyValidationError) ErrorName() string { return "ListByIpReplyValidationError" }
+func (e ListByAddrReplyValidationError) ErrorName() string { return "ListByAddrReplyValidationError" }
 
 // Error satisfies the builtin error interface
-func (e ListByIpReplyValidationError) Error() string {
+func (e ListByAddrReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -256,14 +258,14 @@ func (e ListByIpReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListByIpReply.%s: %s%s",
+		"invalid %sListByAddrReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListByIpReplyValidationError{}
+var _ error = ListByAddrReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -271,48 +273,48 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListByIpReplyValidationError{}
+} = ListByAddrReplyValidationError{}
 
-// Validate checks the field values on GetDetailByIpRequest with the rules
+// Validate checks the field values on GetDetailByAddrRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetDetailByIpRequest) Validate() error {
+func (m *GetDetailByAddrRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetDetailByIpRequest with the rules
+// ValidateAll checks the field values on GetDetailByAddrRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetDetailByIpRequestMultiError, or nil if none found.
-func (m *GetDetailByIpRequest) ValidateAll() error {
+// GetDetailByAddrRequestMultiError, or nil if none found.
+func (m *GetDetailByAddrRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetDetailByIpRequest) validate(all bool) error {
+func (m *GetDetailByAddrRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Ip
+	// no validation rules for Addr
 
-	// no validation rules for FileName
+	// no validation rules for Path
 
 	if len(errors) > 0 {
-		return GetDetailByIpRequestMultiError(errors)
+		return GetDetailByAddrRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetDetailByIpRequestMultiError is an error wrapping multiple validation
-// errors returned by GetDetailByIpRequest.ValidateAll() if the designated
+// GetDetailByAddrRequestMultiError is an error wrapping multiple validation
+// errors returned by GetDetailByAddrRequest.ValidateAll() if the designated
 // constraints aren't met.
-type GetDetailByIpRequestMultiError []error
+type GetDetailByAddrRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetDetailByIpRequestMultiError) Error() string {
+func (m GetDetailByAddrRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -321,11 +323,11 @@ func (m GetDetailByIpRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetDetailByIpRequestMultiError) AllErrors() []error { return m }
+func (m GetDetailByAddrRequestMultiError) AllErrors() []error { return m }
 
-// GetDetailByIpRequestValidationError is the validation error returned by
-// GetDetailByIpRequest.Validate if the designated constraints aren't met.
-type GetDetailByIpRequestValidationError struct {
+// GetDetailByAddrRequestValidationError is the validation error returned by
+// GetDetailByAddrRequest.Validate if the designated constraints aren't met.
+type GetDetailByAddrRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -333,24 +335,24 @@ type GetDetailByIpRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetDetailByIpRequestValidationError) Field() string { return e.field }
+func (e GetDetailByAddrRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetDetailByIpRequestValidationError) Reason() string { return e.reason }
+func (e GetDetailByAddrRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetDetailByIpRequestValidationError) Cause() error { return e.cause }
+func (e GetDetailByAddrRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetDetailByIpRequestValidationError) Key() bool { return e.key }
+func (e GetDetailByAddrRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetDetailByIpRequestValidationError) ErrorName() string {
-	return "GetDetailByIpRequestValidationError"
+func (e GetDetailByAddrRequestValidationError) ErrorName() string {
+	return "GetDetailByAddrRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetDetailByIpRequestValidationError) Error() string {
+func (e GetDetailByAddrRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -362,14 +364,14 @@ func (e GetDetailByIpRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetDetailByIpRequest.%s: %s%s",
+		"invalid %sGetDetailByAddrRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetDetailByIpRequestValidationError{}
+var _ error = GetDetailByAddrRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -377,50 +379,50 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetDetailByIpRequestValidationError{}
+} = GetDetailByAddrRequestValidationError{}
 
-// Validate checks the field values on GetDetailByIpReply with the rules
+// Validate checks the field values on GetDetailByAddrReply with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetDetailByIpReply) Validate() error {
+func (m *GetDetailByAddrReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetDetailByIpReply with the rules
+// ValidateAll checks the field values on GetDetailByAddrReply with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetDetailByIpReplyMultiError, or nil if none found.
-func (m *GetDetailByIpReply) ValidateAll() error {
+// GetDetailByAddrReplyMultiError, or nil if none found.
+func (m *GetDetailByAddrReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetDetailByIpReply) validate(all bool) error {
+func (m *GetDetailByAddrReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for FileName
+	// no validation rules for Path
 
 	// no validation rules for Size
 
 	// no validation rules for UpdatedAt
 
 	if len(errors) > 0 {
-		return GetDetailByIpReplyMultiError(errors)
+		return GetDetailByAddrReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetDetailByIpReplyMultiError is an error wrapping multiple validation errors
-// returned by GetDetailByIpReply.ValidateAll() if the designated constraints
-// aren't met.
-type GetDetailByIpReplyMultiError []error
+// GetDetailByAddrReplyMultiError is an error wrapping multiple validation
+// errors returned by GetDetailByAddrReply.ValidateAll() if the designated
+// constraints aren't met.
+type GetDetailByAddrReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetDetailByIpReplyMultiError) Error() string {
+func (m GetDetailByAddrReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -429,11 +431,11 @@ func (m GetDetailByIpReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetDetailByIpReplyMultiError) AllErrors() []error { return m }
+func (m GetDetailByAddrReplyMultiError) AllErrors() []error { return m }
 
-// GetDetailByIpReplyValidationError is the validation error returned by
-// GetDetailByIpReply.Validate if the designated constraints aren't met.
-type GetDetailByIpReplyValidationError struct {
+// GetDetailByAddrReplyValidationError is the validation error returned by
+// GetDetailByAddrReply.Validate if the designated constraints aren't met.
+type GetDetailByAddrReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -441,24 +443,24 @@ type GetDetailByIpReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetDetailByIpReplyValidationError) Field() string { return e.field }
+func (e GetDetailByAddrReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetDetailByIpReplyValidationError) Reason() string { return e.reason }
+func (e GetDetailByAddrReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetDetailByIpReplyValidationError) Cause() error { return e.cause }
+func (e GetDetailByAddrReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetDetailByIpReplyValidationError) Key() bool { return e.key }
+func (e GetDetailByAddrReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetDetailByIpReplyValidationError) ErrorName() string {
-	return "GetDetailByIpReplyValidationError"
+func (e GetDetailByAddrReplyValidationError) ErrorName() string {
+	return "GetDetailByAddrReplyValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetDetailByIpReplyValidationError) Error() string {
+func (e GetDetailByAddrReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -470,14 +472,14 @@ func (e GetDetailByIpReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetDetailByIpReply.%s: %s%s",
+		"invalid %sGetDetailByAddrReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetDetailByIpReplyValidationError{}
+var _ error = GetDetailByAddrReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -485,48 +487,48 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetDetailByIpReplyValidationError{}
+} = GetDetailByAddrReplyValidationError{}
 
-// Validate checks the field values on DownloadByIpRequest with the rules
+// Validate checks the field values on DownloadByAddrRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadByIpRequest) Validate() error {
+func (m *DownloadByAddrRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DownloadByIpRequest with the rules
+// ValidateAll checks the field values on DownloadByAddrRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DownloadByIpRequestMultiError, or nil if none found.
-func (m *DownloadByIpRequest) ValidateAll() error {
+// DownloadByAddrRequestMultiError, or nil if none found.
+func (m *DownloadByAddrRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DownloadByIpRequest) validate(all bool) error {
+func (m *DownloadByAddrRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Ip
+	// no validation rules for Addr
 
-	// no validation rules for FileName
+	// no validation rules for Path
 
 	if len(errors) > 0 {
-		return DownloadByIpRequestMultiError(errors)
+		return DownloadByAddrRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DownloadByIpRequestMultiError is an error wrapping multiple validation
-// errors returned by DownloadByIpRequest.ValidateAll() if the designated
+// DownloadByAddrRequestMultiError is an error wrapping multiple validation
+// errors returned by DownloadByAddrRequest.ValidateAll() if the designated
 // constraints aren't met.
-type DownloadByIpRequestMultiError []error
+type DownloadByAddrRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DownloadByIpRequestMultiError) Error() string {
+func (m DownloadByAddrRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -535,11 +537,11 @@ func (m DownloadByIpRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DownloadByIpRequestMultiError) AllErrors() []error { return m }
+func (m DownloadByAddrRequestMultiError) AllErrors() []error { return m }
 
-// DownloadByIpRequestValidationError is the validation error returned by
-// DownloadByIpRequest.Validate if the designated constraints aren't met.
-type DownloadByIpRequestValidationError struct {
+// DownloadByAddrRequestValidationError is the validation error returned by
+// DownloadByAddrRequest.Validate if the designated constraints aren't met.
+type DownloadByAddrRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -547,24 +549,24 @@ type DownloadByIpRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DownloadByIpRequestValidationError) Field() string { return e.field }
+func (e DownloadByAddrRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DownloadByIpRequestValidationError) Reason() string { return e.reason }
+func (e DownloadByAddrRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DownloadByIpRequestValidationError) Cause() error { return e.cause }
+func (e DownloadByAddrRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DownloadByIpRequestValidationError) Key() bool { return e.key }
+func (e DownloadByAddrRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DownloadByIpRequestValidationError) ErrorName() string {
-	return "DownloadByIpRequestValidationError"
+func (e DownloadByAddrRequestValidationError) ErrorName() string {
+	return "DownloadByAddrRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DownloadByIpRequestValidationError) Error() string {
+func (e DownloadByAddrRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -576,14 +578,14 @@ func (e DownloadByIpRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDownloadByIpRequest.%s: %s%s",
+		"invalid %sDownloadByAddrRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DownloadByIpRequestValidationError{}
+var _ error = DownloadByAddrRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -591,150 +593,44 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DownloadByIpRequestValidationError{}
+} = DownloadByAddrRequestValidationError{}
 
-// Validate checks the field values on DownloadByIpReply with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DownloadByIpReply) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DownloadByIpReply with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DownloadByIpReplyMultiError, or nil if none found.
-func (m *DownloadByIpReply) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DownloadByIpReply) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return DownloadByIpReplyMultiError(errors)
-	}
-
-	return nil
-}
-
-// DownloadByIpReplyMultiError is an error wrapping multiple validation errors
-// returned by DownloadByIpReply.ValidateAll() if the designated constraints
-// aren't met.
-type DownloadByIpReplyMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DownloadByIpReplyMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DownloadByIpReplyMultiError) AllErrors() []error { return m }
-
-// DownloadByIpReplyValidationError is the validation error returned by
-// DownloadByIpReply.Validate if the designated constraints aren't met.
-type DownloadByIpReplyValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DownloadByIpReplyValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DownloadByIpReplyValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DownloadByIpReplyValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DownloadByIpReplyValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DownloadByIpReplyValidationError) ErrorName() string {
-	return "DownloadByIpReplyValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e DownloadByIpReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDownloadByIpReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DownloadByIpReplyValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DownloadByIpReplyValidationError{}
-
-// Validate checks the field values on DownloadDirByIpRequest with the rules
+// Validate checks the field values on DownloadByAddrReply with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadDirByIpRequest) Validate() error {
+func (m *DownloadByAddrReply) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DownloadDirByIpRequest with the rules
+// ValidateAll checks the field values on DownloadByAddrReply with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DownloadDirByIpRequestMultiError, or nil if none found.
-func (m *DownloadDirByIpRequest) ValidateAll() error {
+// DownloadByAddrReplyMultiError, or nil if none found.
+func (m *DownloadByAddrReply) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DownloadDirByIpRequest) validate(all bool) error {
+func (m *DownloadByAddrReply) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Ip
-
-	// no validation rules for FileName
-
 	if len(errors) > 0 {
-		return DownloadDirByIpRequestMultiError(errors)
+		return DownloadByAddrReplyMultiError(errors)
 	}
 
 	return nil
 }
 
-// DownloadDirByIpRequestMultiError is an error wrapping multiple validation
-// errors returned by DownloadDirByIpRequest.ValidateAll() if the designated
+// DownloadByAddrReplyMultiError is an error wrapping multiple validation
+// errors returned by DownloadByAddrReply.ValidateAll() if the designated
 // constraints aren't met.
-type DownloadDirByIpRequestMultiError []error
+type DownloadByAddrReplyMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DownloadDirByIpRequestMultiError) Error() string {
+func (m DownloadByAddrReplyMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -743,11 +639,11 @@ func (m DownloadDirByIpRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DownloadDirByIpRequestMultiError) AllErrors() []error { return m }
+func (m DownloadByAddrReplyMultiError) AllErrors() []error { return m }
 
-// DownloadDirByIpRequestValidationError is the validation error returned by
-// DownloadDirByIpRequest.Validate if the designated constraints aren't met.
-type DownloadDirByIpRequestValidationError struct {
+// DownloadByAddrReplyValidationError is the validation error returned by
+// DownloadByAddrReply.Validate if the designated constraints aren't met.
+type DownloadByAddrReplyValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -755,24 +651,24 @@ type DownloadDirByIpRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DownloadDirByIpRequestValidationError) Field() string { return e.field }
+func (e DownloadByAddrReplyValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DownloadDirByIpRequestValidationError) Reason() string { return e.reason }
+func (e DownloadByAddrReplyValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DownloadDirByIpRequestValidationError) Cause() error { return e.cause }
+func (e DownloadByAddrReplyValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DownloadDirByIpRequestValidationError) Key() bool { return e.key }
+func (e DownloadByAddrReplyValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DownloadDirByIpRequestValidationError) ErrorName() string {
-	return "DownloadDirByIpRequestValidationError"
+func (e DownloadByAddrReplyValidationError) ErrorName() string {
+	return "DownloadByAddrReplyValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DownloadDirByIpRequestValidationError) Error() string {
+func (e DownloadByAddrReplyValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -784,14 +680,14 @@ func (e DownloadDirByIpRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDownloadDirByIpRequest.%s: %s%s",
+		"invalid %sDownloadByAddrReply.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DownloadDirByIpRequestValidationError{}
+var _ error = DownloadByAddrReplyValidationError{}
 
 var _ interface {
 	Field() string
@@ -799,44 +695,48 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DownloadDirByIpRequestValidationError{}
+} = DownloadByAddrReplyValidationError{}
 
-// Validate checks the field values on DownloadDirByIpReply with the rules
+// Validate checks the field values on DownloadDirByAddrRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DownloadDirByIpReply) Validate() error {
+func (m *DownloadDirByAddrRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DownloadDirByIpReply with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on DownloadDirByAddrRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DownloadDirByIpReplyMultiError, or nil if none found.
-func (m *DownloadDirByIpReply) ValidateAll() error {
+// DownloadDirByAddrRequestMultiError, or nil if none found.
+func (m *DownloadDirByAddrRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DownloadDirByIpReply) validate(all bool) error {
+func (m *DownloadDirByAddrRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Addr
+
+	// no validation rules for Path
+
 	if len(errors) > 0 {
-		return DownloadDirByIpReplyMultiError(errors)
+		return DownloadDirByAddrRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DownloadDirByIpReplyMultiError is an error wrapping multiple validation
-// errors returned by DownloadDirByIpReply.ValidateAll() if the designated
+// DownloadDirByAddrRequestMultiError is an error wrapping multiple validation
+// errors returned by DownloadDirByAddrRequest.ValidateAll() if the designated
 // constraints aren't met.
-type DownloadDirByIpReplyMultiError []error
+type DownloadDirByAddrRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DownloadDirByIpReplyMultiError) Error() string {
+func (m DownloadDirByAddrRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -845,11 +745,11 @@ func (m DownloadDirByIpReplyMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DownloadDirByIpReplyMultiError) AllErrors() []error { return m }
+func (m DownloadDirByAddrRequestMultiError) AllErrors() []error { return m }
 
-// DownloadDirByIpReplyValidationError is the validation error returned by
-// DownloadDirByIpReply.Validate if the designated constraints aren't met.
-type DownloadDirByIpReplyValidationError struct {
+// DownloadDirByAddrRequestValidationError is the validation error returned by
+// DownloadDirByAddrRequest.Validate if the designated constraints aren't met.
+type DownloadDirByAddrRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -857,24 +757,24 @@ type DownloadDirByIpReplyValidationError struct {
 }
 
 // Field function returns field value.
-func (e DownloadDirByIpReplyValidationError) Field() string { return e.field }
+func (e DownloadDirByAddrRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DownloadDirByIpReplyValidationError) Reason() string { return e.reason }
+func (e DownloadDirByAddrRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DownloadDirByIpReplyValidationError) Cause() error { return e.cause }
+func (e DownloadDirByAddrRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DownloadDirByIpReplyValidationError) Key() bool { return e.key }
+func (e DownloadDirByAddrRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DownloadDirByIpReplyValidationError) ErrorName() string {
-	return "DownloadDirByIpReplyValidationError"
+func (e DownloadDirByAddrRequestValidationError) ErrorName() string {
+	return "DownloadDirByAddrRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DownloadDirByIpReplyValidationError) Error() string {
+func (e DownloadDirByAddrRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -886,14 +786,14 @@ func (e DownloadDirByIpReplyValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDownloadDirByIpReply.%s: %s%s",
+		"invalid %sDownloadDirByAddrRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DownloadDirByIpReplyValidationError{}
+var _ error = DownloadDirByAddrRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -901,7 +801,109 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DownloadDirByIpReplyValidationError{}
+} = DownloadDirByAddrRequestValidationError{}
+
+// Validate checks the field values on DownloadDirByAddrReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DownloadDirByAddrReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DownloadDirByAddrReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DownloadDirByAddrReplyMultiError, or nil if none found.
+func (m *DownloadDirByAddrReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DownloadDirByAddrReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DownloadDirByAddrReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DownloadDirByAddrReplyMultiError is an error wrapping multiple validation
+// errors returned by DownloadDirByAddrReply.ValidateAll() if the designated
+// constraints aren't met.
+type DownloadDirByAddrReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DownloadDirByAddrReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DownloadDirByAddrReplyMultiError) AllErrors() []error { return m }
+
+// DownloadDirByAddrReplyValidationError is the validation error returned by
+// DownloadDirByAddrReply.Validate if the designated constraints aren't met.
+type DownloadDirByAddrReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DownloadDirByAddrReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DownloadDirByAddrReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DownloadDirByAddrReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DownloadDirByAddrReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DownloadDirByAddrReplyValidationError) ErrorName() string {
+	return "DownloadDirByAddrReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DownloadDirByAddrReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDownloadDirByAddrReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DownloadDirByAddrReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DownloadDirByAddrReplyValidationError{}
 
 // Validate checks the field values on ListNodeRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1137,46 +1139,48 @@ var _ interface {
 	ErrorName() string
 } = ListNodeReplyValidationError{}
 
-// Validate checks the field values on ListByIpReplyItem with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *ListByIpReplyItem) Validate() error {
+// Validate checks the field values on ListByAddrReplyItem with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListByAddrReplyItem) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListByIpReplyItem with the rules
+// ValidateAll checks the field values on ListByAddrReplyItem with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListByIpReplyItemMultiError, or nil if none found.
-func (m *ListByIpReplyItem) ValidateAll() error {
+// ListByAddrReplyItemMultiError, or nil if none found.
+func (m *ListByAddrReplyItem) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListByIpReplyItem) validate(all bool) error {
+func (m *ListByAddrReplyItem) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for FileName
+	// no validation rules for Path
 
 	// no validation rules for IsDir
 
+	// no validation rules for Size
+
 	if len(errors) > 0 {
-		return ListByIpReplyItemMultiError(errors)
+		return ListByAddrReplyItemMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListByIpReplyItemMultiError is an error wrapping multiple validation errors
-// returned by ListByIpReplyItem.ValidateAll() if the designated constraints
-// aren't met.
-type ListByIpReplyItemMultiError []error
+// ListByAddrReplyItemMultiError is an error wrapping multiple validation
+// errors returned by ListByAddrReplyItem.ValidateAll() if the designated
+// constraints aren't met.
+type ListByAddrReplyItemMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListByIpReplyItemMultiError) Error() string {
+func (m ListByAddrReplyItemMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1185,11 +1189,11 @@ func (m ListByIpReplyItemMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListByIpReplyItemMultiError) AllErrors() []error { return m }
+func (m ListByAddrReplyItemMultiError) AllErrors() []error { return m }
 
-// ListByIpReplyItemValidationError is the validation error returned by
-// ListByIpReplyItem.Validate if the designated constraints aren't met.
-type ListByIpReplyItemValidationError struct {
+// ListByAddrReplyItemValidationError is the validation error returned by
+// ListByAddrReplyItem.Validate if the designated constraints aren't met.
+type ListByAddrReplyItemValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1197,24 +1201,24 @@ type ListByIpReplyItemValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListByIpReplyItemValidationError) Field() string { return e.field }
+func (e ListByAddrReplyItemValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListByIpReplyItemValidationError) Reason() string { return e.reason }
+func (e ListByAddrReplyItemValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListByIpReplyItemValidationError) Cause() error { return e.cause }
+func (e ListByAddrReplyItemValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListByIpReplyItemValidationError) Key() bool { return e.key }
+func (e ListByAddrReplyItemValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListByIpReplyItemValidationError) ErrorName() string {
-	return "ListByIpReplyItemValidationError"
+func (e ListByAddrReplyItemValidationError) ErrorName() string {
+	return "ListByAddrReplyItemValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListByIpReplyItemValidationError) Error() string {
+func (e ListByAddrReplyItemValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1226,14 +1230,14 @@ func (e ListByIpReplyItemValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListByIpReplyItem.%s: %s%s",
+		"invalid %sListByAddrReplyItem.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListByIpReplyItemValidationError{}
+var _ error = ListByAddrReplyItemValidationError{}
 
 var _ interface {
 	Field() string
@@ -1241,7 +1245,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListByIpReplyItemValidationError{}
+} = ListByAddrReplyItemValidationError{}
 
 // Validate checks the field values on ListNodeReplyItem with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1265,9 +1269,11 @@ func (m *ListNodeReplyItem) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Hostname
+	// no validation rules for ServiceID
 
-	// no validation rules for Ip
+	// no validation rules for ServiceAddress
+
+	// no validation rules for ServicePort
 
 	if len(errors) > 0 {
 		return ListNodeReplyItemMultiError(errors)

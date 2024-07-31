@@ -95,11 +95,10 @@ gen:
 .PHONY: all
 # generate all
 all:
-	make api;
+	make api
 	make config
 	make errors
 	make validate
-	make gen
 
 
 export APP_NAME=$(shell echo "filesharer")

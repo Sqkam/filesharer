@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"github.com/go-kratos/kratos/v2/registry"
 	"os"
+	"time"
 
 	"filesharer/internal/conf"
 
@@ -27,7 +29,7 @@ var (
 	// flagconf is the config flag.
 	flagconf string
 
-	id, _ = os.Hostname()
+	id, _ = time.Now().Format(time.RFC3339Nano), errors.New("afdsf")
 )
 
 func init() {

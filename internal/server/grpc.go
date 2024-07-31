@@ -4,7 +4,6 @@ import (
 	v1 "filesharer/api/file/v1"
 	"filesharer/internal/conf"
 	"filesharer/internal/service"
-
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -28,5 +27,10 @@ func NewGRPCServer(c *conf.Server, greeter *service.FileService, logger log.Logg
 	}
 	srv := grpc.NewServer(opts...)
 	v1.RegisterFileServer(srv, greeter)
+	var err error
+	service.Endpoint, err = srv.Endpoint()
+	if err != nil {
+		panic(err)
+	}
 	return srv
 }

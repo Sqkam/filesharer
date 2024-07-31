@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	pb "filesharer/api/file/v1"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -13,11 +14,11 @@ type Filesharer struct {
 
 // FilesharerRepo is a Greater repo.
 type FilesharerRepo interface {
-	Save(context.Context, *Filesharer) (*Filesharer, error)
-	Update(context.Context, *Filesharer) (*Filesharer, error)
-	FindByID(context.Context, int64) (*Filesharer, error)
-	ListByHello(context.Context, string) ([]*Filesharer, error)
-	ListAll(context.Context) ([]*Filesharer, error)
+	ListByAddr(ctx context.Context, req *pb.ListByAddrRequest) (*pb.ListByAddrReply, error)
+	GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAddrRequest) (*pb.GetDetailByAddrReply, error)
+	DownloadByAddr(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error)
+	DownloadDirByAddr(ctx context.Context, req *pb.DownloadDirByAddrRequest) (*pb.DownloadDirByAddrReply, error)
+	ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error)
 }
 
 // FilesharerUsecase is a Filesharer usecase.
@@ -32,7 +33,18 @@ func NewFilesharerUsecase(repo FilesharerRepo, logger log.Logger) *FilesharerUse
 }
 
 // CreateFilesharer creates a Filesharer, and returns the new Filesharer.
-func (uc *FilesharerUsecase) CreateFilesharer(ctx context.Context, g *Filesharer) (*Filesharer, error) {
-	uc.log.WithContext(ctx).Infof("CreateFilesharer: %v", g.Hello)
-	return uc.repo.Save(ctx, g)
+func (uc *FilesharerUsecase) ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error) {
+	return uc.repo.ListNode(ctx, req)
+}
+func (uc *FilesharerUsecase) ListByAddr(ctx context.Context, req *pb.ListByAddrRequest) (*pb.ListByAddrReply, error) {
+	return uc.repo.ListByAddr(ctx, req)
+}
+func (uc *FilesharerUsecase) GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAddrRequest) (*pb.GetDetailByAddrReply, error) {
+	return uc.repo.GetDetailByAddr(ctx, req)
+}
+func (uc *FilesharerUsecase) DownloadByAddr(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error) {
+	return uc.repo.DownloadByAddr(ctx, req)
+}
+func (uc *FilesharerUsecase) DownloadDirByAddr(ctx context.Context, req *pb.DownloadDirByAddrRequest) (*pb.DownloadDirByAddrReply, error) {
+	return uc.repo.DownloadDirByAddr(ctx, req)
 }

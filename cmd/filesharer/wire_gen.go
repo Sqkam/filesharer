@@ -28,7 +28,9 @@ import (
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, bootstrap *conf.Bootstrap, logger log.Logger) (*kratos.App, func(), error) {
 	registrar := InitRegistry(bootstrap)
-	dataData, cleanup, err := data.NewData(confData, logger)
+	fileClient := data.NewFileClient(bootstrap)
+	getConsulInfoClient := data.NewGetConsulInfoClient(bootstrap)
+	dataData, cleanup, err := data.NewData(confData, logger, fileClient, getConsulInfoClient)
 	if err != nil {
 		return nil, nil, err
 	}

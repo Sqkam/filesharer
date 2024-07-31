@@ -19,41 +19,41 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationFileGetDetailByIp = "/api.file.v1.File/GetDetailByIp"
+const OperationFileGetDetailByAddr = "/api.file.v1.File/GetDetailByAddr"
 
 type FileHTTPServer interface {
-	GetDetailByIp(context.Context, *GetDetailByIpRequest) (*GetDetailByIpReply, error)
+	GetDetailByAddr(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error)
 }
 
 func RegisterFileHTTPServer(s *http.Server, srv FileHTTPServer) {
 	r := s.Route("/")
-	r.POST("v1/file/detail", _File_GetDetailByIp0_HTTP_Handler(srv))
+	r.POST("v1/file/detail", _File_GetDetailByAddr0_HTTP_Handler(srv))
 }
 
-func _File_GetDetailByIp0_HTTP_Handler(srv FileHTTPServer) func(ctx http.Context) error {
+func _File_GetDetailByAddr0_HTTP_Handler(srv FileHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in GetDetailByIpRequest
+		var in GetDetailByAddrRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationFileGetDetailByIp)
+		http.SetOperation(ctx, OperationFileGetDetailByAddr)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetDetailByIp(ctx, req.(*GetDetailByIpRequest))
+			return srv.GetDetailByAddr(ctx, req.(*GetDetailByAddrRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*GetDetailByIpReply)
+		reply := out.(*GetDetailByAddrReply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type FileHTTPClient interface {
-	GetDetailByIp(ctx context.Context, req *GetDetailByIpRequest, opts ...http.CallOption) (rsp *GetDetailByIpReply, err error)
+	GetDetailByAddr(ctx context.Context, req *GetDetailByAddrRequest, opts ...http.CallOption) (rsp *GetDetailByAddrReply, err error)
 }
 
 type FileHTTPClientImpl struct {
@@ -64,11 +64,11 @@ func NewFileHTTPClient(client *http.Client) FileHTTPClient {
 	return &FileHTTPClientImpl{client}
 }
 
-func (c *FileHTTPClientImpl) GetDetailByIp(ctx context.Context, in *GetDetailByIpRequest, opts ...http.CallOption) (*GetDetailByIpReply, error) {
-	var out GetDetailByIpReply
+func (c *FileHTTPClientImpl) GetDetailByAddr(ctx context.Context, in *GetDetailByAddrRequest, opts ...http.CallOption) (*GetDetailByAddrReply, error) {
+	var out GetDetailByAddrReply
 	pattern := "v1/file/detail"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationFileGetDetailByIp))
+	opts = append(opts, http.Operation(OperationFileGetDetailByAddr))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

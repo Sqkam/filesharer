@@ -10,12 +10,12 @@ paths:
         post:
             tags:
                 - File
-            operationId: File_GetDetailByIp
+            operationId: File_GetDetailByAddr
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/api.file.v1.GetDetailByIpRequest'
+                            $ref: '#/components/schemas/api.file.v1.GetDetailByAddrRequest'
                 required: true
             responses:
                 "200":
@@ -23,24 +23,24 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/api.file.v1.GetDetailByIpReply'
+                                $ref: '#/components/schemas/api.file.v1.GetDetailByAddrReply'
 components:
     schemas:
-        api.file.v1.GetDetailByIpReply:
+        api.file.v1.GetDetailByAddrReply:
             type: object
             properties:
-                fileName:
+                path:
                     type: string
                 size:
                     type: string
                 updatedAt:
                     type: string
-        api.file.v1.GetDetailByIpRequest:
+        api.file.v1.GetDetailByAddrRequest:
             type: object
             properties:
-                ip:
+                addr:
                     type: string
-                fileName:
+                path:
                     type: string
 tags:
     - name: File

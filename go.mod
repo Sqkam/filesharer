@@ -1,8 +1,6 @@
 module filesharer
 
-go 1.21
-
-toolchain go1.22.0
+go 1.22.0
 
 require (
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20240725023016-d6fca5e3e984
@@ -17,6 +15,8 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
+	github.com/Sqkam/gotools v0.0.0-20240731082142-ec3164749627 // indirect
+	github.com/andeya/goutil v1.0.1 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -35,6 +35,8 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.10.1 // indirect
+	github.com/henrylee2cn/goutil v1.0.1 // indirect
+	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
