@@ -13,6 +13,7 @@ import (
 	"github.com/todocoder/go-stream/stream"
 	"io"
 	"net/url"
+
 	"os"
 	"path/filepath"
 	"sync"
@@ -73,6 +74,7 @@ func (s *FileService) GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAd
 	return resp, err
 }
 func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File_DownloadByAddrServer) error {
+
 	// 不会下载自己实例的文件
 	node, err := s.uc.ListNode(context.Background(), &pb.ListNodeRequest{})
 	if err != nil {

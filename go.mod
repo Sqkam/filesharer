@@ -3,6 +3,7 @@ module filesharer
 go 1.22.0
 
 require (
+	github.com/andeya/goutil v1.0.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20240725023016-d6fca5e3e984
