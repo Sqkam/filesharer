@@ -3,6 +3,7 @@ package data
 import (
 	"archive/tar"
 	"bytes"
+	"filesharer/internal/biz"
 	"fmt"
 	"io"
 	"os"
@@ -29,7 +30,7 @@ func Test_getAllFiles(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			now := time.Now()
-			files := getAllFiles(tt.path)
+			files := biz.GetAllFiles(tt.path, "")
 			fmt.Printf("%v\n", len(files))
 			fmt.Printf("spend:%v\n", time.Since(now).Milliseconds())
 			//now2:=time.Now()

@@ -25,46 +25,6 @@ type FilesharerRepo struct {
 	httpClient *http.Client
 }
 
-func getAllFiles(path string) []*os.FileInfo {
-	files, err := filepath.Glob(path + "/*")
-	if err != nil {
-		return nil
-	}
-	resp := make([]*os.FileInfo, 0)
-	wg := &sync.WaitGroup{}
-	ch := make(chan *os.FileInfo, len(files))
-	for _, v := range files {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			v := v
-			info, err := os.Stat(v)
-			if err != nil {
-				return
-			}
-			if info.IsDir() {
-				allFiles := getAllFiles(v)
-				for _, f := range allFiles {
-					ch <- f
-				}
-			}
-			ch <- &info
-		}()
-	}
-
-	chDone := make(chan struct{})
-	go func() {
-		for v := range ch {
-			resp = append(resp, v)
-		}
-
-		chDone <- struct{}{}
-	}()
-	wg.Wait()
-	close(ch)
-	<-chDone
-	return resp
-}
 func getAllFilesByWalk(path string) []*os.FileInfo {
 	resp := make([]*os.FileInfo, 0)
 	stat, err := os.Stat(path)

@@ -24,8 +24,70 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.file.v1.GetDetailByAddrReply'
+    v1/file/downloadfile:
+        post:
+            tags:
+                - File
+            operationId: File_DownloadByAddr
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.file.v1.DownloadByAddrRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.file.v1.DownloadByAddrReply'
+    v1/file/downloadfir:
+        post:
+            tags:
+                - File
+            operationId: File_DownloadDirByAddr
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.file.v1.DownloadDirByAddrRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.file.v1.DownloadDirByAddrReply'
 components:
     schemas:
+        api.file.v1.DownloadByAddrReply:
+            type: object
+            properties:
+                data:
+                    type: string
+                    format: bytes
+        api.file.v1.DownloadByAddrRequest:
+            type: object
+            properties:
+                addr:
+                    type: string
+                path:
+                    type: string
+        api.file.v1.DownloadDirByAddrReply:
+            type: object
+            properties:
+                data:
+                    type: string
+                    format: bytes
+        api.file.v1.DownloadDirByAddrRequest:
+            type: object
+            properties:
+                addr:
+                    type: string
+                path:
+                    type: string
         api.file.v1.GetDetailByAddrReply:
             type: object
             properties:

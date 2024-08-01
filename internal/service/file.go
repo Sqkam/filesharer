@@ -8,7 +8,6 @@ import (
 	v1 "filesharer/api/file/v1"
 	"filesharer/internal/biz"
 	"filesharer/internal/data"
-	"filesharer/third_party/snowflake"
 	"fmt"
 	"github.com/pierrec/lz4"
 	"github.com/todocoder/go-stream/stream"
@@ -106,18 +105,6 @@ func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File
 	_ = os.MkdirAll("downloads", 0644)
 	_, fileName := filepath.Split(req.Path)
 	fileName = filepath.Join("downloads", fileName)
-	_, err = os.Stat(fileName)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-		} else {
-			return err
-		}
-	}
-
-	if err == nil {
-		fileName = filepath.Base(fileName) + "-" + snowflake.GenID() + filepath.Ext(fileName)
-		fileName = filepath.Join("downloads", fileName)
-	}
 
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
@@ -176,21 +163,7 @@ func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn p
 	}
 	_ = os.MkdirAll("downloads", 0644)
 	_, fileName := filepath.Split(req.Path)
-	fileName = filepath.Join("downloads", fileName)
-
-	_, err = os.Stat(fileName)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			fileName = fileName + ".tar"
-		} else {
-			return err
-		}
-	}
-
-	if err == nil {
-		fileName = filepath.Base(fileName) + "-" + snowflake.GenID() + filepath.Ext(fileName)
-		fileName = filepath.Join("downloads", fileName+".tar")
-	}
+	fileName = filepath.Join("downloads", fileName) + ".tar"
 
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
@@ -245,7 +218,22 @@ func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn p
 		}
 
 		tarFile := filepath.Join(dirName, hdr.Name)
-		f, err := os.OpenFile(tarFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+		mkdirDirString := "./" + filepath.Dir(tarFile)
+		abs, _ := filepath.Abs(mkdirDirString)
+		if !hdr.FileInfo().IsDir() {
+			abs = filepath.Dir(abs)
+		}
+
+		err = os.MkdirAll(abs, 0777)
+		if err != nil {
+			panic(err)
+		}
+		if hdr.FileInfo().IsDir() {
+			continue
+		}
+		writeFileName := filepath.Join(abs, hdr.Name)
+		os.MkdirAll(filepath.Dir(writeFileName), 0644)
+		f, err := os.OpenFile(writeFileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 		if err != nil {
 			return errors.New("系统错误")
 		}
@@ -256,7 +244,7 @@ func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn p
 
 	}
 	rfile.Close()
-	//_ = os.RemoveAll(fileName)
+	_ = os.RemoveAll(fileName)
 	return nil
 
 }

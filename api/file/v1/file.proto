@@ -15,8 +15,18 @@ service File {
       body:"*"
     };
   };
-  rpc DownloadByAddr (DownloadByAddrRequest) returns (stream DownloadByAddrReply);
-  rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply);
+  rpc DownloadByAddr (DownloadByAddrRequest) returns (stream DownloadByAddrReply){
+    option (google.api.http) = {
+      post: "v1/file/downloadfile",
+      body:"*"
+    };
+  };
+  rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply){
+    option (google.api.http) = {
+      post: "v1/file/downloadfir",
+      body:"*"
+    };
+  };
   rpc ListNode (ListNodeRequest) returns (ListNodeReply);
 
 }
