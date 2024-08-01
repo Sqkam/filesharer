@@ -1,12 +1,13 @@
 syntax = "proto3";
 
 package api.file.v1;
-import "google/api/annotations.proto";
+
 option go_package = "filesharer/api/file/v1;v1";
-import "validate/validate.proto";
 option java_multiple_files = true;
 option java_package = "api.file.v1";
 
+import "google/api/annotations.proto";
+import "validate/validate.proto";
 service File {
   rpc ListByAddr (ListByAddrRequest) returns (ListByAddrReply);
   rpc GetDetailByAddr (GetDetailByAddrRequest) returns (GetDetailByAddrReply){
@@ -16,18 +17,30 @@ service File {
     };
   };
   rpc DownloadByAddr (DownloadByAddrRequest) returns (stream DownloadByAddrReply){
+
+  };
+  rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply){
+
+  };
+
+  rpc DownloadByAddrHttp (DownloadByAddrRequest) returns (DownloadByAddrReply){
     option (google.api.http) = {
       post: "v1/file/downloadfile",
       body:"*"
     };
   };
-  rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply){
+  rpc DownloadDirByAddrHttp (DownloadDirByAddrRequest) returns (DownloadDirByAddrReply){
     option (google.api.http) = {
-      post: "v1/file/downloadfir",
+      post: "v1/file/downloaddir",
       body:"*"
     };
   };
-  rpc ListNode (ListNodeRequest) returns (ListNodeReply);
+  rpc ListNode (ListNodeRequest) returns (ListNodeReply){
+    option (google.api.http) = {
+      post: "v1/node/list",
+      body:"*"
+    };
+  };
 
 }
 message ListByAddrRequest{

@@ -24,29 +24,11 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.file.v1.GetDetailByAddrReply'
-    v1/file/downloadfile:
+    v1/file/downloaddir:
         post:
             tags:
                 - File
-            operationId: File_DownloadByAddr
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/api.file.v1.DownloadByAddrRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/api.file.v1.DownloadByAddrReply'
-    v1/file/downloadfir:
-        post:
-            tags:
-                - File
-            operationId: File_DownloadDirByAddr
+            operationId: File_DownloadDirByAddrHttp
             requestBody:
                 content:
                     application/json:
@@ -60,6 +42,42 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.file.v1.DownloadDirByAddrReply'
+    v1/file/downloadfile:
+        post:
+            tags:
+                - File
+            operationId: File_DownloadByAddrHttp
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.file.v1.DownloadByAddrRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.file.v1.DownloadByAddrReply'
+    v1/node/list:
+        post:
+            tags:
+                - File
+            operationId: File_ListNode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.file.v1.ListNodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.file.v1.ListNodeReply'
 components:
     schemas:
         api.file.v1.DownloadByAddrReply:
@@ -104,5 +122,24 @@ components:
                     type: string
                 path:
                     type: string
+        api.file.v1.ListNodeReply:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.file.v1.ListNodeReply_item'
+        api.file.v1.ListNodeReply_item:
+            type: object
+            properties:
+                ServiceID:
+                    type: string
+                ServiceAddress:
+                    type: string
+                ServicePort:
+                    type: string
+        api.file.v1.ListNodeRequest:
+            type: object
+            properties: {}
 tags:
     - name: File
