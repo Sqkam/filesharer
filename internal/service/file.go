@@ -7,8 +7,8 @@ import (
 	v1 "filesharer/api/file/v1"
 	"filesharer/internal/biz"
 	"filesharer/internal/data"
+	"filesharer/third_party/snowflake"
 	"fmt"
-	uuid "github.com/lithammer/shortuuid/v4"
 	"github.com/pierrec/lz4"
 	"github.com/todocoder/go-stream/stream"
 	"io"
@@ -110,7 +110,7 @@ func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File
 	}
 
 	if err == nil {
-		fileName = filepath.Base(fileName) + "-" + uuid.New() + filepath.Ext(fileName)
+		fileName = filepath.Base(fileName) + "-" + snowflake.GenID() + filepath.Ext(fileName)
 		fileName = filepath.Join("downloads", fileName)
 	}
 
