@@ -9,6 +9,7 @@ import (
 	"filesharer/internal/data"
 	"fmt"
 	uuid "github.com/lithammer/shortuuid/v4"
+	"github.com/pierrec/lz4"
 	"github.com/todocoder/go-stream/stream"
 	"io"
 	"net/url"
@@ -109,7 +110,8 @@ func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File
 	}
 
 	if err == nil {
-		fileName = filepath.Base(fileName) + uuid.New() + filepath.Ext(fileName)
+		fileName = filepath.Base(fileName) + "-" + uuid.New() + filepath.Ext(fileName)
+		fileName = filepath.Join("downloads", fileName)
 	}
 
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
@@ -118,6 +120,8 @@ func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File
 	}
 	defer file.Close()
 	//return nil
+	buf := make([]byte, 8192)
+	//
 
 	for {
 		recv, err := stream.Recv()
@@ -127,7 +131,12 @@ func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File
 			}
 			return err
 		}
-		_, err = file.Write(recv.Data)
+		block, err := lz4.UncompressBlock(recv.Data, buf)
+		if err != nil {
+			return err
+		}
+
+		_, err = file.Write(buf[:block])
 		if err != nil {
 			return err
 		}

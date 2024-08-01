@@ -4,6 +4,7 @@ import (
 	"context"
 	pb "filesharer/api/file/v1"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/pierrec/lz4"
 	"io"
 	"os"
 )
@@ -55,11 +56,14 @@ func (uc *FilesharerUsecase) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest,
 
 func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File_DownloadByAddrServer) error {
 	b := make([]byte, 8192)
+
 	file, err := os.OpenFile(req.Path, os.O_RDONLY, 0644)
 	if err != nil {
 		return err
 	}
-	//file.Readdirnames()
+
+	buf := make([]byte, len(b))
+	ht := make([]int, 64<<10)
 	for {
 		n, err := file.Read(b)
 		if err != nil {
@@ -68,8 +72,10 @@ func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn 
 			}
 			return err
 		}
+
+		block, err := lz4.CompressBlock(b[:n], buf, ht)
 		err = conn.Send(&pb.DownloadByAddrReply{
-			Data: b[:n],
+			Data: buf[:block],
 		})
 		if err != nil {
 			return err
