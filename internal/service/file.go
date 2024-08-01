@@ -2,12 +2,18 @@ package service
 
 import (
 	"context"
+	"errors"
 	pb "filesharer/api/file/v1"
 	v1 "filesharer/api/file/v1"
 	"filesharer/internal/biz"
 	"filesharer/internal/data"
 	"fmt"
+	uuid "github.com/lithammer/shortuuid/v4"
+	"github.com/todocoder/go-stream/stream"
+	"io"
 	"net/url"
+	"os"
+	"path/filepath"
 	"sync"
 )
 
@@ -65,48 +71,83 @@ func (s *FileService) GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAd
 	}
 	return resp, err
 }
-func (s *FileService) DownloadByAddr(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error) {
-	if Endpoint.Host == req.Addr {
-		return s.uc.DownloadByAddr(ctx, req)
+func (s *FileService) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File_DownloadByAddrServer) error {
+	// 不会下载自己实例的文件
+	node, err := s.uc.ListNode(context.Background(), &pb.ListNodeRequest{})
+	if err != nil {
+		return err
 	}
+	noMatch := stream.Of(node.Data...).NoneMatch(func(item *v1.ListNodeReplyItem) bool {
+		return fmt.Sprintf("%s:%d", item.ServiceAddress, item.ServicePort) == req.Addr
+	})
+	if noMatch {
+		return errors.New("非法addr")
+	}
+
+	if Endpoint.Host == req.Addr {
+		return s.uc.DownloadByAddr(req, conn)
+	}
+
 	client, err := s.getClient(req.Addr)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	resp, err := client.DownloadByAddr(ctx, req)
+	stream, err := client.DownloadByAddr(context.Background(), req)
 	if err != nil {
 		m.Delete(req.Addr)
+		return err
 	}
-	return resp, err
-
-}
-
-func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn pb.File_DownloadDirByAddrServer) error {
-	if Endpoint.Host == req.Addr {
-		for {
-			err := conn.Send(&pb.DownloadDirByAddrReply{})
-			if err != nil {
-				return err
-			}
+	_ = os.MkdirAll("downloads", 0644)
+	_, fileName := filepath.Split(req.Path)
+	fileName = filepath.Join("downloads", fileName)
+	_, err = os.Stat(fileName)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+		} else {
+			return err
 		}
 	}
 
-	client, err := s.getClient(req.Addr)
+	if err == nil {
+		fileName = filepath.Base(fileName) + uuid.New() + filepath.Ext(fileName)
+	}
+
+	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}
-	stream, err := client.DownloadDirByAddr(context.Background(), req)
-	if err != nil {
-		m.Delete(req.Addr)
-		return err
-	}
+	defer file.Close()
+	//return nil
+
 	for {
 		recv, err := stream.Recv()
 		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
 			return err
 		}
-		fmt.Printf("%v\n", recv)
+		_, err = file.Write(recv.Data)
+		if err != nil {
+			return err
+		}
 	}
+
+}
+func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn pb.File_DownloadDirByAddrServer) error {
+	file, err := os.OpenFile("/root/temp", os.O_RDONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	names, err := file.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%v\n", names)
+	return nil
+	//如果是文件夹,还想解压了
 }
 
 func (s *FileService) ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error) {

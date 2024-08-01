@@ -1,13 +1,11 @@
 package main
 
 import (
-	"errors"
+	"filesharer/internal/conf"
 	"flag"
 	"github.com/go-kratos/kratos/v2/registry"
+	uuid "github.com/lithammer/shortuuid/v4"
 	"os"
-	"time"
-
-	"filesharer/internal/conf"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -29,7 +27,7 @@ var (
 	// flagconf is the config flag.
 	flagconf string
 
-	id, _ = time.Now().Format(time.RFC3339Nano), errors.New("afdsf")
+	id, _ = os.Hostname()
 )
 
 func init() {
@@ -37,6 +35,8 @@ func init() {
 }
 
 func newApp(logger log.Logger, r registry.Registrar, gs *grpc.Server, hs *http.Server) *kratos.App {
+	id = id + ":" + uuid.New()
+
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),

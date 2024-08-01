@@ -3,8 +3,9 @@ package biz
 import (
 	"context"
 	pb "filesharer/api/file/v1"
-
 	"github.com/go-kratos/kratos/v2/log"
+	"io"
+	"os"
 )
 
 // Filesharer is a Filesharer model.
@@ -17,7 +18,7 @@ type FilesharerRepo interface {
 	ListByAddr(ctx context.Context, req *pb.ListByAddrRequest) (*pb.ListByAddrReply, error)
 	GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAddrRequest) (*pb.GetDetailByAddrReply, error)
 	DownloadByAddr(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error)
-	DownloadDirByAddr(ctx context.Context, req *pb.DownloadDirByAddrRequest) (*pb.DownloadDirByAddrReply, error)
+
 	ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error)
 }
 
@@ -42,9 +43,36 @@ func (uc *FilesharerUsecase) ListByAddr(ctx context.Context, req *pb.ListByAddrR
 func (uc *FilesharerUsecase) GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAddrRequest) (*pb.GetDetailByAddrReply, error) {
 	return uc.repo.GetDetailByAddr(ctx, req)
 }
-func (uc *FilesharerUsecase) DownloadByAddr(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error) {
-	return uc.repo.DownloadByAddr(ctx, req)
+
+func (uc *FilesharerUsecase) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn pb.File_DownloadDirByAddrServer) error {
+	for {
+		err := conn.Send(&pb.DownloadDirByAddrReply{})
+		if err != nil {
+			return err
+		}
+	}
 }
-func (uc *FilesharerUsecase) DownloadDirByAddr(ctx context.Context, req *pb.DownloadDirByAddrRequest) (*pb.DownloadDirByAddrReply, error) {
-	return uc.repo.DownloadDirByAddr(ctx, req)
+
+func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File_DownloadByAddrServer) error {
+	b := make([]byte, 8192)
+	file, err := os.OpenFile(req.Path, os.O_RDONLY, 0644)
+	if err != nil {
+		return err
+	}
+	//file.Readdirnames()
+	for {
+		n, err := file.Read(b)
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
+		err = conn.Send(&pb.DownloadByAddrReply{
+			Data: b[:n],
+		})
+		if err != nil {
+			return err
+		}
+	}
 }

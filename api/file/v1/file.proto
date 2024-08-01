@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.file.v1;
 import "google/api/annotations.proto";
 option go_package = "filesharer/api/file/v1;v1";
+import "validate/validate.proto";
 option java_multiple_files = true;
 option java_package = "api.file.v1";
 
@@ -14,7 +15,7 @@ service File {
       body:"*"
     };
   };
-  rpc DownloadByAddr (DownloadByAddrRequest) returns (DownloadByAddrReply);
+  rpc DownloadByAddr (DownloadByAddrRequest) returns (stream DownloadByAddrReply);
   rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply);
   rpc ListNode (ListNodeRequest) returns (ListNodeReply);
 
@@ -27,7 +28,7 @@ message ListByAddrReply{
   message item{
     string path = 1;
     bool is_dir = 2;
-    int64 size=3;
+    int64 size = 3;
   }
   repeated item data = 1;
 }
@@ -42,18 +43,18 @@ message GetDetailByAddrReply{
 }
 message DownloadByAddrRequest{
   string addr = 1;
-  string path = 2;
+  string path = 2[(validate.rules).string.min_len = 1];
 
 }
 message DownloadByAddrReply{
-  //todo
+  bytes data = 1;
 }
 message DownloadDirByAddrRequest{
   string addr = 1;
-  string path = 2;
+  string path = 2[(validate.rules).string.min_len = 1];
 }
 message DownloadDirByAddrReply{
-  //todo
+  bytes data = 1;
 }
 message ListNodeRequest{
 
@@ -62,7 +63,7 @@ message ListNodeReply{
   message item{
     string ServiceID = 1;
     string ServiceAddress = 2;
-      int64 ServicePort=3;
+    int64 ServicePort = 3;
   }
-  repeated item data=1;
+  repeated item data = 1;
 }

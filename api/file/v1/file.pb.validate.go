@@ -513,7 +513,16 @@ func (m *DownloadByAddrRequest) validate(all bool) error {
 
 	// no validation rules for Addr
 
-	// no validation rules for Path
+	if utf8.RuneCountInString(m.GetPath()) < 1 {
+		err := DownloadByAddrRequestValidationError{
+			field:  "Path",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DownloadByAddrRequestMultiError(errors)
@@ -616,6 +625,8 @@ func (m *DownloadByAddrReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Data
 
 	if len(errors) > 0 {
 		return DownloadByAddrReplyMultiError(errors)
@@ -721,7 +732,16 @@ func (m *DownloadDirByAddrRequest) validate(all bool) error {
 
 	// no validation rules for Addr
 
-	// no validation rules for Path
+	if utf8.RuneCountInString(m.GetPath()) < 1 {
+		err := DownloadDirByAddrRequestValidationError{
+			field:  "Path",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DownloadDirByAddrRequestMultiError(errors)
@@ -824,6 +844,8 @@ func (m *DownloadDirByAddrReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Data
 
 	if len(errors) > 0 {
 		return DownloadDirByAddrReplyMultiError(errors)

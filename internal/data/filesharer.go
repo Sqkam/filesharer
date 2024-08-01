@@ -87,11 +87,6 @@ func (f *FilesharerRepo) DownloadByAddr(ctx context.Context, req *v1.DownloadByA
 	panic("implement me")
 }
 
-func (f *FilesharerRepo) DownloadDirByAddr(ctx context.Context, req *v1.DownloadDirByAddrRequest) (*v1.DownloadDirByAddrReply, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (f *FilesharerRepo) ListNode(ctx context.Context, req *v1.ListNodeRequest) (*v1.ListNodeReply, error) {
 
 	httreq, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("http://%s/v1/catalog/service/filesharer", f.data.getConsulInfoClient.ip), nil)

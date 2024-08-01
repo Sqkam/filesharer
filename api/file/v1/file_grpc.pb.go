@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.19.6
-// source: api/file/v1/file.proto
+// source: file/v1/file.proto
 
 package v1
 
@@ -32,7 +32,7 @@ const (
 type FileClient interface {
 	ListByAddr(ctx context.Context, in *ListByAddrRequest, opts ...grpc.CallOption) (*ListByAddrReply, error)
 	GetDetailByAddr(ctx context.Context, in *GetDetailByAddrRequest, opts ...grpc.CallOption) (*GetDetailByAddrReply, error)
-	DownloadByAddr(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (*DownloadByAddrReply, error)
+	DownloadByAddr(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadByAddrReply], error)
 	DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadDirByAddrReply], error)
 	ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error)
 }
@@ -65,19 +65,28 @@ func (c *fileClient) GetDetailByAddr(ctx context.Context, in *GetDetailByAddrReq
 	return out, nil
 }
 
-func (c *fileClient) DownloadByAddr(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (*DownloadByAddrReply, error) {
+func (c *fileClient) DownloadByAddr(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadByAddrReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DownloadByAddrReply)
-	err := c.cc.Invoke(ctx, File_DownloadByAddr_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &File_ServiceDesc.Streams[0], File_DownloadByAddr_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &grpc.GenericClientStream[DownloadByAddrRequest, DownloadByAddrReply]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type File_DownloadByAddrClient = grpc.ServerStreamingClient[DownloadByAddrReply]
 
 func (c *fileClient) DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadDirByAddrReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &File_ServiceDesc.Streams[0], File_DownloadDirByAddr_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &File_ServiceDesc.Streams[1], File_DownloadDirByAddr_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +119,7 @@ func (c *fileClient) ListNode(ctx context.Context, in *ListNodeRequest, opts ...
 type FileServer interface {
 	ListByAddr(context.Context, *ListByAddrRequest) (*ListByAddrReply, error)
 	GetDetailByAddr(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error)
-	DownloadByAddr(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error)
+	DownloadByAddr(*DownloadByAddrRequest, grpc.ServerStreamingServer[DownloadByAddrReply]) error
 	DownloadDirByAddr(*DownloadDirByAddrRequest, grpc.ServerStreamingServer[DownloadDirByAddrReply]) error
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 	mustEmbedUnimplementedFileServer()
@@ -129,8 +138,8 @@ func (UnimplementedFileServer) ListByAddr(context.Context, *ListByAddrRequest) (
 func (UnimplementedFileServer) GetDetailByAddr(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDetailByAddr not implemented")
 }
-func (UnimplementedFileServer) DownloadByAddr(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadByAddr not implemented")
+func (UnimplementedFileServer) DownloadByAddr(*DownloadByAddrRequest, grpc.ServerStreamingServer[DownloadByAddrReply]) error {
+	return status.Errorf(codes.Unimplemented, "method DownloadByAddr not implemented")
 }
 func (UnimplementedFileServer) DownloadDirByAddr(*DownloadDirByAddrRequest, grpc.ServerStreamingServer[DownloadDirByAddrReply]) error {
 	return status.Errorf(codes.Unimplemented, "method DownloadDirByAddr not implemented")
@@ -195,23 +204,16 @@ func _File_GetDetailByAddr_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_DownloadByAddr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadByAddrRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _File_DownloadByAddr_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(DownloadByAddrRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(FileServer).DownloadByAddr(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: File_DownloadByAddr_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).DownloadByAddr(ctx, req.(*DownloadByAddrRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(FileServer).DownloadByAddr(m, &grpc.GenericServerStream[DownloadByAddrRequest, DownloadByAddrReply]{ServerStream: stream})
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type File_DownloadByAddrServer = grpc.ServerStreamingServer[DownloadByAddrReply]
 
 func _File_DownloadDirByAddr_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(DownloadDirByAddrRequest)
@@ -258,20 +260,21 @@ var File_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _File_GetDetailByAddr_Handler,
 		},
 		{
-			MethodName: "DownloadByAddr",
-			Handler:    _File_DownloadByAddr_Handler,
-		},
-		{
 			MethodName: "ListNode",
 			Handler:    _File_ListNode_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
+			StreamName:    "DownloadByAddr",
+			Handler:       _File_DownloadByAddr_Handler,
+			ServerStreams: true,
+		},
+		{
 			StreamName:    "DownloadDirByAddr",
 			Handler:       _File_DownloadDirByAddr_Handler,
 			ServerStreams: true,
 		},
 	},
-	Metadata: "api/file/v1/file.proto",
+	Metadata: "file/v1/file.proto",
 }
