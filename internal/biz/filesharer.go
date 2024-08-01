@@ -1,13 +1,19 @@
 package biz
 
 import (
+	"archive/tar"
+	"bytes"
+
 	"context"
+	"errors"
 	pb "filesharer/api/file/v1"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pierrec/lz4"
 	"io"
 	"os"
 )
+
+const bufSize = 8192 * 100 * 3
 
 // Filesharer is a Filesharer model.
 type Filesharer struct {
@@ -46,26 +52,44 @@ func (uc *FilesharerUsecase) GetDetailByAddr(ctx context.Context, req *pb.GetDet
 }
 
 func (uc *FilesharerUsecase) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn pb.File_DownloadDirByAddrServer) error {
-	for {
-		err := conn.Send(&pb.DownloadDirByAddrReply{})
-		if err != nil {
-			return err
-		}
-	}
-}
-
-func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File_DownloadByAddrServer) error {
-	b := make([]byte, 8192)
-
-	file, err := os.OpenFile(req.Path, os.O_RDONLY, 0644)
+	stat, err := os.Stat(req.Path)
 	if err != nil {
 		return err
 	}
+	if !stat.IsDir() {
+		return errors.New("不要乱搞")
+	}
+	var tarBuf bytes.Buffer
 
-	buf := make([]byte, len(b))
+	tw := tar.NewWriter(&tarBuf)
+	var files = []struct {
+		Name, Body string
+	}{
+		{"readme.txt", "This archive contains some text files."},
+		{"gopher.txt", "Gopher names:\nGeorge\nGeoffrey\nGonzo"},
+		{"todo.txt", "Get animal handling license."},
+	}
+	for _, file := range files {
+		hdr := &tar.Header{
+			Name: file.Name,
+			Mode: 0600,
+			Size: int64(len(file.Body)),
+		}
+		if err := tw.WriteHeader(hdr); err != nil {
+			panic(err)
+		}
+		if _, err := tw.Write([]byte(file.Body)); err != nil {
+			panic(err)
+		}
+	}
+	if err := tw.Close(); err != nil {
+		return err
+	}
+	readBuf := make([]byte, bufSize)
+	lz4Buf := make([]byte, bufSize)
 	ht := make([]int, 64<<10)
 	for {
-		n, err := file.Read(b)
+		n, err := tarBuf.Read(readBuf)
 		if err != nil {
 			if err == io.EOF {
 				return nil
@@ -73,9 +97,50 @@ func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn 
 			return err
 		}
 
-		block, err := lz4.CompressBlock(b[:n], buf, ht)
+		block, err := lz4.CompressBlock(readBuf[:n], lz4Buf, ht)
+
+		err = conn.Send(&pb.DownloadDirByAddrReply{
+			Data: lz4Buf[:block],
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn pb.File_DownloadByAddrServer) error {
+
+	stat, err := os.Stat(req.Path)
+	if err != nil {
+		return err
+	}
+	if stat.IsDir() {
+		return errors.New("不要乱搞")
+	}
+
+	buf := make([]byte, bufSize)
+
+	file, err := os.OpenFile(req.Path, os.O_RDONLY, 0644)
+	if err != nil {
+		return err
+	}
+
+	lz4Buf := make([]byte, len(buf))
+	ht := make([]int, 64<<10)
+	for {
+		n, err := file.Read(buf)
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
+
+		block, err := lz4.CompressBlock(buf[:n], lz4Buf, ht)
 		err = conn.Send(&pb.DownloadByAddrReply{
-			Data: buf[:block],
+			Data: lz4Buf[:block],
 		})
 		if err != nil {
 			return err
