@@ -3,7 +3,6 @@ package data
 import (
 	"context"
 	"encoding/json"
-	"github.com/Sqkam/gotools"
 	"io"
 	"os"
 	"path/filepath"
@@ -39,10 +38,10 @@ func getAllFiles(path string, parent string) []biz.FileInfo {
 	if err != nil {
 		return nil
 	}
-	files := make([]*FileItem, len(relPaths))
+	files := make([]FileItem, len(relPaths))
 	for i, v := range relPaths {
 		abs, _ := filepath.Abs(v)
-		files[i] = &FileItem{RelPaths: v, AbsPaths: abs}
+		files[i] = FileItem{RelPaths: v, AbsPaths: abs}
 	}
 
 	resp := make([]biz.FileInfo, 0)
@@ -129,13 +128,54 @@ func getAllFilesByWalk(path string) []*os.FileInfo {
 	return resp
 }
 func (f *FilesharerRepo) ListByAddr(ctx context.Context, req *v1.ListByAddrRequest) (*v1.ListByAddrReply, error) {
-	var err error
-	files := getAllFiles(req.Path, "")
-	resp := &v1.ListByAddrReply{}
-	resp.Data, err = gotools.CopySlice[*v1.ListByAddrReplyItem](files)
+	//info, err := os.Stat(req.Path)
+	////if errors.Is(err,os.ErrNotExist) {
+	//
+	////}
+	//if err != nil {
+	//	return nil, err
+	//}
+	//if !info.IsDir() {
+	//	return nil, errors.New("不是文件夹")
+	//}
+
+	files, err := filepath.Glob(req.Path + "*")
 	if err != nil {
 		return nil, err
 	}
+	resp := &v1.ListByAddrReply{
+		Data: make([]*v1.ListByAddrReplyItem, 0, len(files)),
+	}
+	wg := &sync.WaitGroup{}
+	ch := make(chan *v1.ListByAddrReplyItem, len(files))
+	for _, v := range files {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			v := v
+			info, err := os.Stat(v)
+			if err != nil {
+				return
+			}
+			ch <- &v1.ListByAddrReplyItem{
+				Path:  info.Name(),
+				IsDir: info.IsDir(),
+				Size:  info.Size(),
+			}
+		}()
+	}
+	chDone := make(chan struct{})
+	go func() {
+		for v := range ch {
+			resp.Data = append(resp.Data, v)
+		}
+
+		chDone <- struct{}{}
+	}()
+	wg.Wait()
+	close(ch)
+	<-chDone
+
 	return resp, nil
 }
 func (f *FilesharerRepo) GetAllFiles(path, parent string) []biz.FileInfo {

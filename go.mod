@@ -3,6 +3,7 @@ module filesharer
 go 1.22.0
 
 require (
+	github.com/andeya/goutil v1.0.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/go-kratos/kratos/contrib/registry/consul/v2 v2.0.0-20240725023016-d6fca5e3e984
@@ -20,7 +21,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/Sqkam/gotools v0.0.0-20240731082142-ec3164749627 // indirect
+	github.com/Sqkam/gotools v0.0.0-20240802043906-ba4199109999 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
