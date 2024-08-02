@@ -3,20 +3,18 @@ package biz
 import (
 	"archive/tar"
 	"bytes"
-	"fmt"
-	"google.golang.org/grpc"
-	"io/fs"
-	"path/filepath"
-	"strings"
-	"sync"
-
 	"context"
 	"errors"
 	pb "filesharer/api/file/v1"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pierrec/lz4"
+	"google.golang.org/grpc"
 	"io"
+	"io/fs"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 const bufSize = 8192 * 100 * 3
@@ -33,6 +31,16 @@ type FilesharerRepo interface {
 	DownloadByAddr(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error)
 
 	ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error)
+	GetAllFiles(path string, s string) []FileInfo
+}
+
+type FileInfo struct {
+	Path  string
+	Size  int64
+	Body  []byte
+	IsDir bool
+	Mode  fs.FileMode
+	Fi    os.FileInfo
 }
 
 // FilesharerUsecase is a Filesharer usecase.
@@ -162,6 +170,7 @@ func (uc *FilesharerUsecase) DownloadDirByStream(stream grpc.ServerStreamingClie
 
 	}
 	rfile.Close()
+	//todo window 无法删除文件
 	_ = os.RemoveAll(fileName)
 	return nil
 
@@ -189,18 +198,13 @@ func (uc *FilesharerUsecase) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest,
 	var tarBuf bytes.Buffer
 
 	tw := tar.NewWriter(&tarBuf)
-	var files = GetAllFiles(req.Path, "")
+	var files = uc.repo.GetAllFiles(req.Path, "")
 	for _, file := range files {
-		//hdr := &tar.Header{
-		//	Name:  file.Path,
-		//	Mode: 0644,
-		//	Size: file.Size,
-		//}
 		hdr, err := tar.FileInfoHeader(file.Fi, "")
 		if err != nil {
 			return err
 		}
-		//hdr.Name = strings.TrimPrefix(fileName, prefix)
+
 		hdr.Name = file.Path
 
 		if err := tw.WriteHeader(hdr); err != nil {
@@ -279,90 +283,4 @@ func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn 
 			return err
 		}
 	}
-}
-
-type FileInfo struct {
-	Path  string
-	Size  int64
-	Body  []byte
-	IsDir bool
-	Mode  fs.FileMode
-	Fi    os.FileInfo
-}
-type FileItem struct {
-	RelPaths string
-	AbsPaths string
-}
-
-func GetAllFiles(path string, parent string) []FileInfo {
-	if !filepath.IsAbs(path) {
-		return nil
-	}
-
-	relPaths, err := filepath.Glob(path + "/*")
-	if err != nil {
-		return nil
-	}
-	files := make([]*FileItem, len(relPaths))
-	for i, v := range relPaths {
-		abs, _ := filepath.Abs(v)
-		files[i] = &FileItem{RelPaths: v, AbsPaths: abs}
-	}
-
-	resp := make([]FileInfo, 0)
-	wg := &sync.WaitGroup{}
-	ch := make(chan FileInfo, len(files))
-	for _, v := range files {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			v := v
-			info, err := os.Stat(v.RelPaths)
-			if err != nil {
-				return
-			}
-			filePath := filepath.Join(parent, info.Name())
-			if info.IsDir() {
-				allFiles := GetAllFiles(v.RelPaths, filePath)
-				for _, f := range allFiles {
-					ch <- f
-				}
-			}
-
-			f, err := os.Open(v.AbsPaths)
-			if err != nil {
-				return
-			}
-			defer f.Close()
-			all := make([]byte, 0)
-			if !info.IsDir() {
-				all, err = io.ReadAll(f)
-				if err != nil {
-					return
-				}
-			}
-			info.Mode()
-			ch <- FileInfo{
-				Path:  filePath,
-				IsDir: info.IsDir(),
-				Size:  info.Size(),
-				Body:  all,
-				Mode:  info.Mode(),
-				Fi:    info,
-			}
-		}()
-	}
-
-	chDone := make(chan struct{})
-	go func() {
-		for v := range ch {
-			resp = append(resp, v)
-		}
-
-		chDone <- struct{}{}
-	}()
-	wg.Wait()
-	close(ch)
-	<-chDone
-	return resp
 }

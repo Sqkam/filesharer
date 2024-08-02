@@ -60,6 +60,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.file.v1.DownloadByAddrReply'
+    v1/file/list:
+        post:
+            tags:
+                - File
+            operationId: File_ListByAddr
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.file.v1.ListByAddrRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.file.v1.ListByAddrReply'
     v1/node/list:
         post:
             tags:
@@ -116,6 +134,29 @@ components:
                 updatedAt:
                     type: string
         api.file.v1.GetDetailByAddrRequest:
+            type: object
+            properties:
+                addr:
+                    type: string
+                path:
+                    type: string
+        api.file.v1.ListByAddrReply:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.file.v1.ListByAddrReply_item'
+        api.file.v1.ListByAddrReply_item:
+            type: object
+            properties:
+                path:
+                    type: string
+                isDir:
+                    type: boolean
+                size:
+                    type: string
+        api.file.v1.ListByAddrRequest:
             type: object
             properties:
                 addr:

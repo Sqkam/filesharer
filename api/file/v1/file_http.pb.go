@@ -22,21 +22,46 @@ const _ = http.SupportPackageIsVersion1
 const OperationFileDownloadByAddrHttp = "/api.file.v1.File/DownloadByAddrHttp"
 const OperationFileDownloadDirByAddrHttp = "/api.file.v1.File/DownloadDirByAddrHttp"
 const OperationFileGetDetailByAddr = "/api.file.v1.File/GetDetailByAddr"
+const OperationFileListByAddr = "/api.file.v1.File/ListByAddr"
 const OperationFileListNode = "/api.file.v1.File/ListNode"
 
 type FileHTTPServer interface {
 	DownloadByAddrHttp(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error)
 	DownloadDirByAddrHttp(context.Context, *DownloadDirByAddrRequest) (*DownloadDirByAddrReply, error)
 	GetDetailByAddr(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error)
+	ListByAddr(context.Context, *ListByAddrRequest) (*ListByAddrReply, error)
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 }
 
 func RegisterFileHTTPServer(s *http.Server, srv FileHTTPServer) {
 	r := s.Route("/")
+	r.POST("v1/file/list", _File_ListByAddr0_HTTP_Handler(srv))
 	r.POST("v1/file/detail", _File_GetDetailByAddr0_HTTP_Handler(srv))
 	r.POST("v1/file/downloadfile", _File_DownloadByAddrHttp0_HTTP_Handler(srv))
 	r.POST("v1/file/downloaddir", _File_DownloadDirByAddrHttp0_HTTP_Handler(srv))
 	r.POST("v1/node/list", _File_ListNode0_HTTP_Handler(srv))
+}
+
+func _File_ListByAddr0_HTTP_Handler(srv FileHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListByAddrRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationFileListByAddr)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListByAddr(ctx, req.(*ListByAddrRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListByAddrReply)
+		return ctx.Result(200, reply)
+	}
 }
 
 func _File_GetDetailByAddr0_HTTP_Handler(srv FileHTTPServer) func(ctx http.Context) error {
@@ -131,6 +156,7 @@ type FileHTTPClient interface {
 	DownloadByAddrHttp(ctx context.Context, req *DownloadByAddrRequest, opts ...http.CallOption) (rsp *DownloadByAddrReply, err error)
 	DownloadDirByAddrHttp(ctx context.Context, req *DownloadDirByAddrRequest, opts ...http.CallOption) (rsp *DownloadDirByAddrReply, err error)
 	GetDetailByAddr(ctx context.Context, req *GetDetailByAddrRequest, opts ...http.CallOption) (rsp *GetDetailByAddrReply, err error)
+	ListByAddr(ctx context.Context, req *ListByAddrRequest, opts ...http.CallOption) (rsp *ListByAddrReply, err error)
 	ListNode(ctx context.Context, req *ListNodeRequest, opts ...http.CallOption) (rsp *ListNodeReply, err error)
 }
 
@@ -173,6 +199,19 @@ func (c *FileHTTPClientImpl) GetDetailByAddr(ctx context.Context, in *GetDetailB
 	pattern := "v1/file/detail"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationFileGetDetailByAddr))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *FileHTTPClientImpl) ListByAddr(ctx context.Context, in *ListByAddrRequest, opts ...http.CallOption) (*ListByAddrReply, error) {
+	var out ListByAddrReply
+	pattern := "v1/file/list"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationFileListByAddr))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

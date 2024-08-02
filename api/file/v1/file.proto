@@ -9,7 +9,12 @@ option java_package = "api.file.v1";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 service File {
-  rpc ListByAddr (ListByAddrRequest) returns (ListByAddrReply);
+  rpc ListByAddr (ListByAddrRequest) returns (ListByAddrReply){
+    option (google.api.http) = {
+      post: "v1/file/list",
+      body:"*"
+    };
+  };
   rpc GetDetailByAddr (GetDetailByAddrRequest) returns (GetDetailByAddrReply){
     option (google.api.http) = {
       post: "v1/file/detail",
