@@ -9,25 +9,21 @@ option java_package = "api.file.v1";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 service File {
-  rpc ListByAddr (ListByAddrRequest) returns (ListByAddrReply){
-    option (google.api.http) = {
-      post: "v1/file/list",
-      body:"*"
-    };
-  };
+  rpc ListByAddr (ListByAddrRequest) returns (ListByAddrReply);
   rpc GetDetailByAddr (GetDetailByAddrRequest) returns (GetDetailByAddrReply){
-    option (google.api.http) = {
-      post: "v1/file/detail",
-      body:"*"
-    };
+
   };
   rpc DownloadByAddr (DownloadByAddrRequest) returns (stream DownloadByAddrReply){
 
   };
   rpc DownloadDirByAddr (DownloadDirByAddrRequest) returns (stream DownloadDirByAddrReply){
-
   };
-
+  rpc ListByAddrHttp (ListByAddrRequest) returns (ListByAddrReply){
+    option (google.api.http) = {
+      post: "v1/file/list",
+      body:"*"
+    };
+  };
   rpc DownloadByAddrHttp (DownloadByAddrRequest) returns (DownloadByAddrReply){
     option (google.api.http) = {
       post: "v1/file/downloadfile",
@@ -43,6 +39,13 @@ service File {
   rpc ListNode (ListNodeRequest) returns (ListNodeReply){
     option (google.api.http) = {
       post: "v1/node/list",
+      body:"*"
+    };
+  };
+
+  rpc GetDetailByAddrHttp (GetDetailByAddrRequest) returns (GetDetailByAddrReply){
+    option (google.api.http) = {
+      post: "v1/file/detail",
       body:"*"
     };
   };

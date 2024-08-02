@@ -37,20 +37,7 @@ func (s *FileService) getClient(addr string) (v1.FileClient, error) {
 	return client, nil
 }
 func (s *FileService) ListByAddr(ctx context.Context, req *pb.ListByAddrRequest) (*pb.ListByAddrReply, error) {
-	if Endpoint.Host == req.Addr {
-		return s.uc.ListByAddr(ctx, req)
-	}
-	client, err := s.getClient(req.Addr)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := client.ListByAddr(ctx, req)
-	if err != nil {
-		m.Delete(req.Addr)
-		return nil, err
-	}
-
-	return resp, err
+	return s.uc.ListByAddr(ctx, req)
 }
 func (s *FileService) GetDetailByAddr(ctx context.Context, req *pb.GetDetailByAddrRequest) (*pb.GetDetailByAddrReply, error) {
 	if Endpoint.Host == req.Addr {
@@ -74,9 +61,7 @@ func (s *FileService) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest, conn p
 }
 
 func (s *FileService) ListNode(ctx context.Context, req *pb.ListNodeRequest) (*pb.ListNodeReply, error) {
-
 	return s.uc.ListNode(ctx, req)
-
 }
 
 func (s *FileService) DownloadByAddrHttp(ctx context.Context, req *pb.DownloadByAddrRequest) (*pb.DownloadByAddrReply, error) {
@@ -113,4 +98,21 @@ func (s *FileService) DownloadDirByAddrHttp(ctx context.Context, req *pb.Downloa
 	}
 	return nil, nil
 
+}
+
+func (s *FileService) ListByAddrHttp(ctx context.Context, req *pb.ListByAddrRequest) (*pb.ListByAddrReply, error) {
+	client, err := s.getClient(req.Addr)
+	if err != nil {
+		return nil, err
+	}
+	return client.ListByAddr(ctx, req)
+
+}
+func (s *FileService) GetDetailByAddrHttp(ctx context.Context, req *pb.GetDetailByAddrRequest) (*pb.GetDetailByAddrReply, error) {
+
+	client, err := s.getClient(req.Addr)
+	if err != nil {
+		return nil, err
+	}
+	return client.GetDetailByAddr(ctx, req)
 }

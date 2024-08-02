@@ -10,7 +10,7 @@ paths:
         post:
             tags:
                 - File
-            operationId: File_GetDetailByAddr
+            operationId: File_GetDetailByAddrHttp
             requestBody:
                 content:
                     application/json:
@@ -64,7 +64,7 @@ paths:
         post:
             tags:
                 - File
-            operationId: File_ListByAddr
+            operationId: File_ListByAddrHttp
             requestBody:
                 content:
                     application/json:

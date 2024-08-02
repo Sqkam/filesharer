@@ -23,9 +23,11 @@ const (
 	File_GetDetailByAddr_FullMethodName       = "/api.file.v1.File/GetDetailByAddr"
 	File_DownloadByAddr_FullMethodName        = "/api.file.v1.File/DownloadByAddr"
 	File_DownloadDirByAddr_FullMethodName     = "/api.file.v1.File/DownloadDirByAddr"
+	File_ListByAddrHttp_FullMethodName        = "/api.file.v1.File/ListByAddrHttp"
 	File_DownloadByAddrHttp_FullMethodName    = "/api.file.v1.File/DownloadByAddrHttp"
 	File_DownloadDirByAddrHttp_FullMethodName = "/api.file.v1.File/DownloadDirByAddrHttp"
 	File_ListNode_FullMethodName              = "/api.file.v1.File/ListNode"
+	File_GetDetailByAddrHttp_FullMethodName   = "/api.file.v1.File/GetDetailByAddrHttp"
 )
 
 // FileClient is the client API for File service.
@@ -36,9 +38,11 @@ type FileClient interface {
 	GetDetailByAddr(ctx context.Context, in *GetDetailByAddrRequest, opts ...grpc.CallOption) (*GetDetailByAddrReply, error)
 	DownloadByAddr(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadByAddrReply], error)
 	DownloadDirByAddr(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadDirByAddrReply], error)
+	ListByAddrHttp(ctx context.Context, in *ListByAddrRequest, opts ...grpc.CallOption) (*ListByAddrReply, error)
 	DownloadByAddrHttp(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (*DownloadByAddrReply, error)
 	DownloadDirByAddrHttp(ctx context.Context, in *DownloadDirByAddrRequest, opts ...grpc.CallOption) (*DownloadDirByAddrReply, error)
 	ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error)
+	GetDetailByAddrHttp(ctx context.Context, in *GetDetailByAddrRequest, opts ...grpc.CallOption) (*GetDetailByAddrReply, error)
 }
 
 type fileClient struct {
@@ -107,6 +111,16 @@ func (c *fileClient) DownloadDirByAddr(ctx context.Context, in *DownloadDirByAdd
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type File_DownloadDirByAddrClient = grpc.ServerStreamingClient[DownloadDirByAddrReply]
 
+func (c *fileClient) ListByAddrHttp(ctx context.Context, in *ListByAddrRequest, opts ...grpc.CallOption) (*ListByAddrReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListByAddrReply)
+	err := c.cc.Invoke(ctx, File_ListByAddrHttp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *fileClient) DownloadByAddrHttp(ctx context.Context, in *DownloadByAddrRequest, opts ...grpc.CallOption) (*DownloadByAddrReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DownloadByAddrReply)
@@ -137,6 +151,16 @@ func (c *fileClient) ListNode(ctx context.Context, in *ListNodeRequest, opts ...
 	return out, nil
 }
 
+func (c *fileClient) GetDetailByAddrHttp(ctx context.Context, in *GetDetailByAddrRequest, opts ...grpc.CallOption) (*GetDetailByAddrReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDetailByAddrReply)
+	err := c.cc.Invoke(ctx, File_GetDetailByAddrHttp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileServer is the server API for File service.
 // All implementations must embed UnimplementedFileServer
 // for forward compatibility.
@@ -145,9 +169,11 @@ type FileServer interface {
 	GetDetailByAddr(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error)
 	DownloadByAddr(*DownloadByAddrRequest, grpc.ServerStreamingServer[DownloadByAddrReply]) error
 	DownloadDirByAddr(*DownloadDirByAddrRequest, grpc.ServerStreamingServer[DownloadDirByAddrReply]) error
+	ListByAddrHttp(context.Context, *ListByAddrRequest) (*ListByAddrReply, error)
 	DownloadByAddrHttp(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error)
 	DownloadDirByAddrHttp(context.Context, *DownloadDirByAddrRequest) (*DownloadDirByAddrReply, error)
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
+	GetDetailByAddrHttp(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error)
 	mustEmbedUnimplementedFileServer()
 }
 
@@ -170,6 +196,9 @@ func (UnimplementedFileServer) DownloadByAddr(*DownloadByAddrRequest, grpc.Serve
 func (UnimplementedFileServer) DownloadDirByAddr(*DownloadDirByAddrRequest, grpc.ServerStreamingServer[DownloadDirByAddrReply]) error {
 	return status.Errorf(codes.Unimplemented, "method DownloadDirByAddr not implemented")
 }
+func (UnimplementedFileServer) ListByAddrHttp(context.Context, *ListByAddrRequest) (*ListByAddrReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListByAddrHttp not implemented")
+}
 func (UnimplementedFileServer) DownloadByAddrHttp(context.Context, *DownloadByAddrRequest) (*DownloadByAddrReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloadByAddrHttp not implemented")
 }
@@ -178,6 +207,9 @@ func (UnimplementedFileServer) DownloadDirByAddrHttp(context.Context, *DownloadD
 }
 func (UnimplementedFileServer) ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNode not implemented")
+}
+func (UnimplementedFileServer) GetDetailByAddrHttp(context.Context, *GetDetailByAddrRequest) (*GetDetailByAddrReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDetailByAddrHttp not implemented")
 }
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
 func (UnimplementedFileServer) testEmbeddedByValue()              {}
@@ -258,6 +290,24 @@ func _File_DownloadDirByAddr_Handler(srv interface{}, stream grpc.ServerStream) 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type File_DownloadDirByAddrServer = grpc.ServerStreamingServer[DownloadDirByAddrReply]
 
+func _File_ListByAddrHttp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListByAddrRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServer).ListByAddrHttp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: File_ListByAddrHttp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServer).ListByAddrHttp(ctx, req.(*ListByAddrRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _File_DownloadByAddrHttp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DownloadByAddrRequest)
 	if err := dec(in); err != nil {
@@ -312,6 +362,24 @@ func _File_ListNode_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _File_GetDetailByAddrHttp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDetailByAddrRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServer).GetDetailByAddrHttp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: File_GetDetailByAddrHttp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServer).GetDetailByAddrHttp(ctx, req.(*GetDetailByAddrRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // File_ServiceDesc is the grpc.ServiceDesc for File service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +396,10 @@ var File_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _File_GetDetailByAddr_Handler,
 		},
 		{
+			MethodName: "ListByAddrHttp",
+			Handler:    _File_ListByAddrHttp_Handler,
+		},
+		{
 			MethodName: "DownloadByAddrHttp",
 			Handler:    _File_DownloadByAddrHttp_Handler,
 		},
@@ -338,6 +410,10 @@ var File_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListNode",
 			Handler:    _File_ListNode_Handler,
+		},
+		{
+			MethodName: "GetDetailByAddrHttp",
+			Handler:    _File_GetDetailByAddrHttp_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
