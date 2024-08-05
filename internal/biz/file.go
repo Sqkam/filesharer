@@ -3,6 +3,7 @@ package biz
 import (
 	"errors"
 	pb "filesharer/api/file/v1"
+
 	"google.golang.org/grpc"
 	"os"
 	"path/filepath"
@@ -24,6 +25,7 @@ func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn 
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 	var n int
 	for {
 		n, err = file.Read(buf)

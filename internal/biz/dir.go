@@ -43,6 +43,7 @@ func (uc *FilesharerUsecase) DownloadDirByStream(stream grpc.ServerStreamingClie
 	if err != nil {
 		return errors.New("系统错误")
 	}
+	defer rfile.Close()
 	ext := filepath.Ext(fileName)
 
 	dirName := strings.SplitN(fileName, ext, -1)[0]
@@ -107,11 +108,13 @@ func (uc *FilesharerUsecase) DownloadDirByAddr(req *pb.DownloadDirByAddrRequest,
 
 	pr, pw, _ := os.Pipe()
 	go func() {
+		defer pw.Close()
 		err = gotools.TarTo(req.Path, pw, false, func(s string, i ...interface{}) {})
 		if err != nil {
 
 			return
 		}
+
 	}()
 
 	readBuf := make([]byte, bufSize)
