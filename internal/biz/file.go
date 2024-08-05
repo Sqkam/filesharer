@@ -3,6 +3,9 @@ package biz
 import (
 	"errors"
 	pb "filesharer/api/file/v1"
+	"fmt"
+	"github.com/pierrec/lz4"
+	"io"
 
 	"google.golang.org/grpc"
 	"os"
@@ -19,27 +22,36 @@ func (uc *FilesharerUsecase) DownloadByAddr(req *pb.DownloadByAddrRequest, conn 
 		return errors.New("不要乱搞")
 	}
 
-	buf := make([]byte, bufSize)
-
 	file, err := os.OpenFile(req.Path, os.O_RDONLY, 0644)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-	var n int
-	for {
-		n, err = file.Read(buf)
-		if err != nil {
-			break
-		}
-		err = conn.Send(&pb.DownloadByAddrReply{
-			Data: buf[:n],
-		})
-		if err != nil {
-			break
-		}
+	pr, pw, _ := os.Pipe()
+	zw := lz4.NewWriter(pw)
+
+	errCh := make(chan error)
+	go func() {
+		var err error
+		_, err = io.Copy(zw, file)
+
+		zw.Close()
+		pw.Close()
+		errCh <- err
+
+	}()
+
+	writer := NewGrpcWriter(conn)
+	_, err = io.Copy(writer, pr)
+	if err != nil {
+		return err
 	}
-	return err
+	err = <-errCh
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
 
 func (uc *FilesharerUsecase) DownloadByStream(stream grpc.ServerStreamingClient[pb.DownloadByAddrReply], path string) error {
@@ -52,18 +64,32 @@ func (uc *FilesharerUsecase) DownloadByStream(stream grpc.ServerStreamingClient[
 		return err
 	}
 	defer file.Close()
+	pr, pw := io.Pipe()
 
-	for {
-		recv, err := stream.Recv()
-		if err != nil {
-			break
-		}
+	zr := lz4.NewReader(pr)
+	errCh := make(chan error)
 
-		_, err = file.Write(recv.Data)
-		if err != nil {
-			break
-		}
+	var readCount int64
+	var writeCount int64
+	go func() {
+		reader := NewGrpcReader(stream)
+		var err error
+
+		readCount, err = io.Copy(pw, reader)
+
+		_ = pw.Close()
+		errCh <- err
+	}()
+
+	writeCount, err = io.Copy(file, zr)
+	if err != nil {
+		return err
 	}
+	err = <-errCh
+	if err != nil {
+		return err
+	}
+	fmt.Printf("file压缩率: %v\n", float64(readCount)/float64(writeCount))
 
-	return err
+	return nil
 }

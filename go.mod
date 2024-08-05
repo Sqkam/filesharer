@@ -21,7 +21,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/Sqkam/gotools v0.0.0-20240802043906-ba4199109999 // indirect
+	github.com/Sqkam/gotools v0.0.0-20240805132657-2a90754a1ec8 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
